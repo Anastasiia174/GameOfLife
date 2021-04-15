@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOfLife.UI", "GameOfLife.UI\GameOfLife.UI.csproj", "{002CFF93-AF6D-4FA4-B7AE-8C3F16318CED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.Domain", "GameOfLife.Domain\GameOfLife.Domain.csproj", "{0017ECB5-F0AC-4FDF-8B09-089CA22AC93F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOfLife.Core", "GameOfLife.Core\GameOfLife.Core.csproj", "{0017ECB5-F0AC-4FDF-8B09-089CA22AC93F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
