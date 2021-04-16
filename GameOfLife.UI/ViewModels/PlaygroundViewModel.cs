@@ -17,14 +17,16 @@ namespace GameOfLife.UI.ViewModels
 
         public int Length { get; private set; }
 
-        public RelayCommand StartCommand { get; private set; }
+        public RelayCommand<object> StartCommand { get; private set; }
 
-        public RelayCommand PauseCommand { get; private set; }
+        public RelayCommand<object> PauseCommand { get; private set; }
 
-        public RelayCommand SaveCommand { get; private set; }
+        public RelayCommand<object> SaveCommand { get; private set; }
 
-        public RelayCommand ChangeConfigurationCommand { get; private set; }
+        public RelayCommand<object> ChangeConfigurationCommand { get; private set; }
 
-        public RelayCommand RandomizeCellsCommand { get; private set; }
+        public RelayCommand<object> RandomizeCellsCommand { get; private set; }
+
+        public RelayCommand<CellCoordinate> ToggleCellLifeStateCommand { get; private set; }
     }
 }

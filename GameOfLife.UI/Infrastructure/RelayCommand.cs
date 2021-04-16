@@ -3,11 +3,11 @@ using System.Windows.Input;
 
 namespace GameOfLife.UI.Infrastructure
 {
-    public class RelayCommand : ICommand
+    public class RelayCommand<T> : ICommand
     {
-        private Action<object> _execute;
+        private readonly Action<T> _execute;
 
-        private Func<object, bool> _canExecute;
+        private readonly Func<T, bool> _canExecute;
 
         public event EventHandler CanExecuteChanged
         {
@@ -15,7 +15,7 @@ namespace GameOfLife.UI.Infrastructure
             remove => CommandManager.RequerySuggested -= value;
         }
 
-        public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)
+        public RelayCommand(Action<T> execute, Func<T, bool> canExecute = null)
         {
             this._execute = execute;
             this._canExecute = canExecute;
@@ -23,12 +23,12 @@ namespace GameOfLife.UI.Infrastructure
 
         public bool CanExecute(object parameter)
         {
-            return this._canExecute == null || this._canExecute(parameter);
+            return this._canExecute == null || this._canExecute((T)parameter);
         }
 
         public void Execute(object parameter)
         {
-            this._execute(parameter);
+            this._execute((T)parameter);
         }
     }
 }

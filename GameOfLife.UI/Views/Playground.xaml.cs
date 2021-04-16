@@ -1,7 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using GameOfLife.Core;
+using GameOfLife.UI.Infrastructure;
 using GameOfLife.UI.ViewModels;
 
 namespace GameOfLife.UI.Views
@@ -44,7 +48,7 @@ namespace GameOfLife.UI.Views
                         PlaygroundGrid.ColumnDefinitions.Add(new ColumnDefinition());
                     }
 
-                    var cellRectangle = new Rectangle();
+                    var cellRectangle = CreateRectangle(new CellViewModel(new Cell(row, column, false)));
                     var border = new Border
                     {
                         BorderBrush = new SolidColorBrush(Colors.Gray),
@@ -58,6 +62,44 @@ namespace GameOfLife.UI.Views
                     PlaygroundGrid.Children.Add(border);
                 }
             }
+        }
+
+        private Rectangle CreateRectangle(CellViewModel cell)
+        {
+            var rectangle = new Rectangle
+            {
+                DataContext = cell
+            };
+            rectangle.InputBindings.Add(CreateMouseClickInputBinding(cell));
+            rectangle.SetBinding(Shape.FillProperty, CreateCellLifeStateBinding());
+
+            return rectangle;
+        }
+
+        private InputBinding CreateMouseClickInputBinding(CellViewModel cell)
+        {
+            var cellRectangle = new InputBinding(
+                _playgroundViewModel.ToggleCellLifeStateCommand,
+                new MouseGesture(MouseAction.LeftClick)
+            )
+            {
+                CommandParameter = new CellCoordinate(cell.Row, cell.Column)
+            };
+
+            return cellRectangle;
+        }
+
+        private static Binding CreateCellLifeStateBinding()
+        {
+            return new Binding
+            {
+                Path = new PropertyPath("IsAlive"),
+                Mode = BindingMode.TwoWay,
+                Converter = new LifeStateToColorConverter(
+                    aliveColor: Brushes.Black,
+                    deadColor: Brushes.White
+                )
+            };
         }
     }
 }
