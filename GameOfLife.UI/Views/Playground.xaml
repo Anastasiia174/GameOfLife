@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameOfLife"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="600">
+        Title="Game of Life" Height="450" Width="600">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
@@ -20,7 +20,7 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Column="1" Grid.Row="2" Name="PlaygroundGrid" ShowGridLines="True" Height="Auto"></Grid>    
+        <Grid Grid.Column="1" Grid.Row="2" Name="PlaygroundGrid" Height="Auto"></Grid>    
         <Grid Grid.Column="1" Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"/>
@@ -39,11 +39,11 @@
                 <RowDefinition Height="25"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Button Content="Start" Grid.Column="1" Grid.Row="1" Command="{Binding ShowDetailsCommand}"/>
-            <Button Content="Pause" Grid.Column="3" Grid.Row="1" Command="{Binding RemoveCommand}"/>
-            <Button Content="Save" Grid.Column="5" Grid.Row="1" Command="{Binding AddCommand}"/>
-            <Button Content="Change conf" Grid.Column="7" Grid.Row="1" Command="{Binding ApplyChangesCommand}"/>
-            <Button Content="Random" Grid.Column="9" Grid.Row="1" Command="{Binding ApplyChangesCommand}"/>
+            <Button Content="Start" Grid.Column="1" Grid.Row="1" Command="{Binding StartCommand}"/>
+            <Button Content="Pause" Grid.Column="3" Grid.Row="1" Command="{Binding PauseCommand}"/>
+            <Button Content="Save" Grid.Column="5" Grid.Row="1" Command="{Binding SaveCommand}"/>
+            <Button Content="Change conf" Grid.Column="7" Grid.Row="1" Command="{Binding ChangeConfigurationCommand}"/>
+            <Button Content="Random" Grid.Column="9" Grid.Row="1" Command="{Binding RandomizeCellsCommand}"/>
         </Grid>
     </Grid>
 </Window>
