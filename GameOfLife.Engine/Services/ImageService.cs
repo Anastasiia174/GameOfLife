@@ -1,9 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using GameOfLife.Core.Extensions;
 
-namespace GameOfLife.Core.Services
+namespace GameOfLife.Engine.Services
 {
     public class ImageService
     {
@@ -43,7 +42,7 @@ namespace GameOfLife.Core.Services
 
             for (var y = 0; y < imageHeight; y++)
             {
-                Int32Rect gridRect = new Int32Rect(0, y, imageWidth, 1);
+                var gridRect = new Int32Rect(0, y, imageWidth, 1);
                 bitmap.WritePixels(
                     gridRect, 
                     y % pixelsPerCell == 0 ? fullRowBorder : partRowBorder, 

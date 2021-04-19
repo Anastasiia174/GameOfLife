@@ -86,8 +86,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helpers\CellPosition.cs" />
+    <Compile Include="Helpers\BitmapToImageConverter.cs" />
+    <Compile Include="Infrastructure\CellPosition.cs" />
     <Compile Include="Helpers\MouseBehaviour.cs" />
+    <Compile Include="Infrastructure\PlaygroundState.cs" />
     <Compile Include="ViewModels\PlaygroundViewModel.cs" />
     <Compile Include="Views\Playground.xaml.cs">
       <DependentUpon>Playground.xaml</DependentUpon>
@@ -123,9 +125,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\GameOfLife.Core\GameOfLife.Core.csproj">
+    <ProjectReference Include="..\GameOfLife.Engine\GameOfLife.Engine.csproj">
       <Project>{0017ecb5-f0ac-4fdf-8b09-089ca22ac93f}</Project>
-      <Name>GameOfLife.Core</Name>
+      <Name>GameOfLife.Engine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

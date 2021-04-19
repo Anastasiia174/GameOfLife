@@ -11,6 +11,9 @@
     <Window.DataContext>
         <Binding Source="{StaticResource Playground}"></Binding>
     </Window.DataContext>
+    <Window.Resources>
+        <helpers:BitmapToImageConverter x:Key="ImageConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
@@ -35,10 +38,8 @@
                        Stretch="Uniform" RenderOptions.BitmapScalingMode="NearestNeighbor" 
                        RenderOptions.EdgeMode="Aliased"
                        Cursor="Hand"
-                       helpers:MouseBehaviour.MouseUpCommand="{Binding ToggleCellStateCommand}">
-                    <Image.Source>
-                        <BitmapImage UriSource="{Binding PlaygroundImageSource}"></BitmapImage>
-                    </Image.Source>
+                       helpers:MouseBehaviour.MouseUpCommand="{Binding ToggleCellStateCommand}"
+                       Source="{Binding PlaygroundImageSource, Mode=OneWay, Converter={StaticResource ImageConverter}}">
                 </Image>
             </ScrollViewer>
         </Grid>

@@ -8,8 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using GameOfLife.Core.Services;
-using GameOfLife.Helpers;
+using GameOfLife.Engine;
+using GameOfLife.Infrastructure;
 
 namespace GameOfLife.ViewModels
 {
@@ -19,26 +19,29 @@ namespace GameOfLife.ViewModels
 
         private int _height;
 
-        private readonly IRenderService _imageService;
+        private IGameEngine _gameEngine;
+
+        private Playground _playground;
 
         public PlaygroundViewModel()
-        : this(100, 100, new RenderService())
+        : this(10, 10)
         {
         }
 
-        public PlaygroundViewModel(int width, int height, IRenderService imageService)
+        public PlaygroundViewModel(int width, int height)
         {
             _width = width;
             _height = height;
-            _imageService = imageService;
 
-            var path = _imageService.CreatePlayground(_width, _height);
-            _playgroundImageSource = new Uri(Path.GetFullPath(path));
+            _playground = new Playground(_width, _height);
+            _gameEngine = new GameEngine(_playground);
+
+            PlaygroundImageSource = _playground.Body;
         }
 
-        private Uri _playgroundImageSource;
+        private Bitmap _playgroundImageSource;
 
-        public Uri PlaygroundImageSource
+        public Bitmap PlaygroundImageSource
         {
             get
             {
@@ -64,7 +67,17 @@ namespace GameOfLife.ViewModels
             }
         }
 
-        public RelayCommand StartCommand { get; private set; }
+        private RelayCommand _startCommand;
+
+        public RelayCommand StartCommand
+        {
+            get
+            {
+                return _startCommand ??
+                       (_startCommand = new RelayCommand(StartGame));
+            }
+
+        }
 
         public RelayCommand PauseCommand { get; private set; }
 
@@ -74,20 +87,38 @@ namespace GameOfLife.ViewModels
 
         public RelayCommand RandomizeCellsCommand { get; private set; }
 
-        private RelayCommand<CellPosition> _toggleCellStateCommand;
+        private RelayCommand<PlaygroundState> _toggleCellStateCommand;
+        
 
-        public RelayCommand<CellPosition> ToggleCellStateCommand
+        public RelayCommand<PlaygroundState> ToggleCellStateCommand
         {
             get
             {
                 return _toggleCellStateCommand ??
-                       (_toggleCellStateCommand = new RelayCommand<CellPosition>(ToggleCellState));
+                       (_toggleCellStateCommand = new RelayCommand<PlaygroundState>(ToggleCellState));
             }
         }
 
-        private void ToggleCellState(CellPosition position)
+        private void StartGame()
         {
-            SelectedCell = position;
+            _gameEngine.MoveToNextGeneration();
+
+            RaisePropertyChanged(() => PlaygroundImageSource);
+        }
+
+        private void ToggleCellState(PlaygroundState playgroundState)
+        {
+            var cellWidth = playgroundState.Width / _width;
+            var cellHeight = playgroundState.Height / _height;
+
+            var cellX = (int)(playgroundState.ActiveCell.X / cellWidth);
+            var cellY = (int)(playgroundState.ActiveCell.Y / cellHeight);
+
+            SelectedCell = playgroundState.ActiveCell;
+
+            _gameEngine.ChangeUniverseState(new Cell(cellX, cellY));
+
+            RaisePropertyChanged(() => PlaygroundImageSource);
         }
     }
 }

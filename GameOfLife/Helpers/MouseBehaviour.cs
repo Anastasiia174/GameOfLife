@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using GameOfLife.Infrastructure;
 
 namespace GameOfLife.Helpers
 {
@@ -17,18 +18,22 @@ namespace GameOfLife.Helpers
 
         private static void MouseUpCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement element = (FrameworkElement)d;
+            var element = (FrameworkElement)d;
 
             element.MouseUp += new MouseButtonEventHandler(element_MouseUp);
         }
 
         static void element_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            FrameworkElement element = (FrameworkElement)sender;
+            var element = (FrameworkElement)sender;
 
-            ICommand command = GetMouseUpCommand(element);
+            var command = GetMouseUpCommand(element);
             var pos = e.GetPosition(element);
-            command.Execute(new CellPosition() {X = pos.X, Y = pos.Y});
+
+            var width = element.ActualWidth;
+            var height = element.ActualHeight;
+
+            command.Execute(new PlaygroundState(width, height, new CellPosition() { X = (int)pos.X, Y = (int)pos.Y }));
         }
 
         public static void SetMouseUpCommand(UIElement element, ICommand value)
