@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameOfLife"
-        xmlns:vm="clr-namespace:GameOfLife.ViewModels"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:helpers="clr-namespace:GameOfLife.Helpers"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="900">
     <Window.DataContext>
@@ -24,11 +25,21 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
+        <StackPanel Grid.Column="1" Grid.Row="1" DockPanel.Dock="Top" Orientation="Horizontal">
+            <TextBlock Text="{Binding SelectedCell.X, StringFormat='X={0}'}" />
+            <TextBlock Text="{Binding SelectedCell.Y, StringFormat='y={0}'}" />
+        </StackPanel>
         <Grid Grid.Column="1" Grid.Row="2" Name="PlaygroundGrid" Height="Auto">
             <ScrollViewer HorizontalScrollBarVisibility="Auto">
-                <Image Name="Image" Source="{Binding PlaygroundImageSource}" 
+                <Image Name="Image"  
                        Stretch="Uniform" RenderOptions.BitmapScalingMode="NearestNeighbor" 
-                       RenderOptions.EdgeMode="Aliased" />
+                       RenderOptions.EdgeMode="Aliased"
+                       Cursor="Hand"
+                       helpers:MouseBehaviour.MouseUpCommand="{Binding ToggleCellStateCommand}">
+                    <Image.Source>
+                        <BitmapImage UriSource="{Binding PlaygroundImageSource}"></BitmapImage>
+                    </Image.Source>
+                </Image>
             </ScrollViewer>
         </Grid>
         <Grid Grid.Column="1" Grid.Row="4">

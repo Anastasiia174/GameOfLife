@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using GameOfLife.Extensions;
+using GameOfLife.Core.Extensions;
 
-namespace GameOfLife.Services
+namespace GameOfLife.Core.Services
 {
-    public class ImageService : IImageService
+    public class ImageService
     {
         private const byte AllPixelsWhite = 255;
 
         private const byte AllPixelsGray = 170;
 
-        private const byte TwoPixelsGrayOtherWhite = 175;
+        private const byte FirstPixelGraySecondWhite = 175;
 
         public ImageSource RenderGrid(int width, int height)
         {
@@ -43,22 +38,17 @@ namespace GameOfLife.Services
 
             for (var i = 0; i < imageWidth; i += pixelsPerCell / 2)
             {
-                partRowBorder[i] = TwoPixelsGrayOtherWhite;
+                partRowBorder[i] = FirstPixelGraySecondWhite;
             }
 
             for (var y = 0; y < imageHeight; y++)
             {
-                Int32Rect gridRect;
-                if (y % pixelsPerCell == 0)
-                {
-                    gridRect = new Int32Rect(0, y, imageWidth, 1);
-                    bitmap.WritePixels(gridRect, fullRowBorder, rawStride, 0);
-                }
-                else
-                {
-                    gridRect = new Int32Rect(0, y, imageWidth, 1);
-                    bitmap.WritePixels(gridRect, partRowBorder, rawStride, 0);
-                }
+                Int32Rect gridRect = new Int32Rect(0, y, imageWidth, 1);
+                bitmap.WritePixels(
+                    gridRect, 
+                    y % pixelsPerCell == 0 ? fullRowBorder : partRowBorder, 
+                    rawStride, 
+                    0);
             }
 
             return bitmap;

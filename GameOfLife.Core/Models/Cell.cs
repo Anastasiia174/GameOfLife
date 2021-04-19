@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GameOfLife.Core
+﻿namespace GameOfLife.Core.Models
 {
     public class Cell
     {

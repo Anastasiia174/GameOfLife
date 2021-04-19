@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using GameOfLife.Services;
+using GameOfLife.Core.Services;
+using GameOfLife.Helpers;
 
 namespace GameOfLife.ViewModels
 {
@@ -16,26 +19,26 @@ namespace GameOfLife.ViewModels
 
         private int _height;
 
-        private readonly IImageService _imageService;
+        private readonly IRenderService _imageService;
 
         public PlaygroundViewModel()
-        : this(10, 10, new ImageService())
+        : this(100, 100, new RenderService())
         {
         }
 
-        public PlaygroundViewModel(int width, int height, IImageService imageService)
+        public PlaygroundViewModel(int width, int height, IRenderService imageService)
         {
             _width = width;
             _height = height;
             _imageService = imageService;
 
-
-            _playgroundImageSource = _imageService.RenderGrid(_width, _height);
+            var path = _imageService.CreatePlayground(_width, _height);
+            _playgroundImageSource = new Uri(Path.GetFullPath(path));
         }
 
-        private ImageSource _playgroundImageSource;
+        private Uri _playgroundImageSource;
 
-        public ImageSource PlaygroundImageSource
+        public Uri PlaygroundImageSource
         {
             get
             {
@@ -44,6 +47,20 @@ namespace GameOfLife.ViewModels
             set
             {
                 Set(() => PlaygroundImageSource, ref _playgroundImageSource, value);
+            }
+        }
+
+        private CellPosition _selectedCell;
+
+        public CellPosition SelectedCell
+        {
+            get
+            {
+                return _selectedCell;
+            }
+            set
+            {
+                Set(() => SelectedCell, ref _selectedCell, value);
             }
         }
 
@@ -57,5 +74,20 @@ namespace GameOfLife.ViewModels
 
         public RelayCommand RandomizeCellsCommand { get; private set; }
 
+        private RelayCommand<CellPosition> _toggleCellStateCommand;
+
+        public RelayCommand<CellPosition> ToggleCellStateCommand
+        {
+            get
+            {
+                return _toggleCellStateCommand ??
+                       (_toggleCellStateCommand = new RelayCommand<CellPosition>(ToggleCellState));
+            }
+        }
+
+        private void ToggleCellState(CellPosition position)
+        {
+            SelectedCell = position;
+        }
     }
 }
