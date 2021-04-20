@@ -55,6 +55,8 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -65,11 +67,13 @@
                     Command="{Binding StartCommand}"/>
             <Button Content="Pause" Grid.Column="3" Grid.Row="1" 
                     Command="{Binding PauseCommand}"/>
-            <Button Content="Save" Grid.Column="5" Grid.Row="1" 
+            <Button Content="Reset" Grid.Column="5" Grid.Row="1" 
+                    Command="{Binding ResetCommand}"/>
+            <Button Content="Save" Grid.Column="7" Grid.Row="1" 
                     Command="{Binding SaveCommand}"/>
-            <Button Content="Change conf" Grid.Column="7" Grid.Row="1" 
+            <Button Content="Change conf" Grid.Column="9" Grid.Row="1" 
                     Command="{Binding ChangeConfigurationCommand}"/>
-            <Button Content="Random" Grid.Column="9" Grid.Row="1" 
+            <Button Content="Random" Grid.Column="11" Grid.Row="1" 
                     Command="{Binding RandomizeCellsCommand}"/>
         </Grid>
     </Grid>

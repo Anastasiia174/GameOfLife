@@ -6,8 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Threading;
 using GameOfLife.Engine;
 using GameOfLife.Infrastructure;
 
@@ -23,6 +25,8 @@ namespace GameOfLife.ViewModels
 
         private Playground _playground;
 
+        private readonly DispatcherTimer _timer;
+
         public PlaygroundViewModel()
         : this(10, 10)
         {
@@ -35,8 +39,11 @@ namespace GameOfLife.ViewModels
 
             _playground = new Playground(_width, _height);
             _gameEngine = new GameEngine(_playground);
-
+            _playground.Configuration = UniverseConfiguration.Closed;
             PlaygroundImageSource = _playground.Body;
+
+            _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
+            _timer.Tick += UpdatePlayground;
         }
 
         private Bitmap _playgroundImageSource;
@@ -67,6 +74,35 @@ namespace GameOfLife.ViewModels
             }
         }
 
+        private bool _gameEnded;
+
+        public bool GameEnded
+        {
+            get
+            {
+                return _gameEnded;
+            }
+            set
+            {
+                Set(() => GameEnded, ref _gameEnded, value);
+                StartCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private bool _gameRunning;
+
+        public bool GameRunning
+        {
+            get
+            {
+                return _gameRunning;
+            }
+            set
+            {
+                Set(() => GameRunning, ref _gameRunning, value);
+            }
+        }
+
         private RelayCommand _startCommand;
 
         public RelayCommand StartCommand
@@ -74,12 +110,32 @@ namespace GameOfLife.ViewModels
             get
             {
                 return _startCommand ??
-                       (_startCommand = new RelayCommand(StartGame));
+                       (_startCommand = new RelayCommand(StartGame, CanStartGame));
             }
 
         }
 
-        public RelayCommand PauseCommand { get; private set; }
+        private RelayCommand _pauseCommand;
+
+        public RelayCommand PauseCommand
+        {
+            get
+            {
+                return _pauseCommand ??
+                       (_pauseCommand = new RelayCommand(PauseGame, CanPauseGame));
+            }
+        }
+
+        private RelayCommand _resetCommand;
+
+        public RelayCommand ResetCommand
+        {
+            get
+            {
+                return _resetCommand ??
+                       (new RelayCommand(ResetGame));
+            }
+        }
 
         public RelayCommand SaveCommand { get; private set; }
 
@@ -88,22 +144,55 @@ namespace GameOfLife.ViewModels
         public RelayCommand RandomizeCellsCommand { get; private set; }
 
         private RelayCommand<PlaygroundState> _toggleCellStateCommand;
-        
 
         public RelayCommand<PlaygroundState> ToggleCellStateCommand
         {
             get
             {
                 return _toggleCellStateCommand ??
-                       (_toggleCellStateCommand = new RelayCommand<PlaygroundState>(ToggleCellState));
+                       (_toggleCellStateCommand = new RelayCommand<PlaygroundState>(ToggleCellState, CanToggleCellState));
             }
         }
 
         private void StartGame()
         {
-            _gameEngine.MoveToNextGeneration();
+            _timer.Start();
+            GameRunning = true;
+        }
+
+        private bool CanStartGame()
+        {
+            return !GameEnded && !GameRunning;
+        }
+
+        private async void UpdatePlayground(object sender, object e)
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                {
+                    _gameEngine.MoveToNextGeneration();
+                }
+            });
 
             RaisePropertyChanged(() => PlaygroundImageSource);
+            GameEnded = _gameEngine.GameEnded;
+
+            if (GameEnded)
+            {
+                _timer.Stop();
+                GameRunning = false;
+            }
+        }
+
+        private void PauseGame()
+        {
+            _timer.Stop();
+            GameRunning = false;
+        }
+
+        private bool CanPauseGame()
+        {
+            return GameRunning;
         }
 
         private void ToggleCellState(PlaygroundState playgroundState)
@@ -119,6 +208,21 @@ namespace GameOfLife.ViewModels
             _gameEngine.ChangeUniverseState(new Cell(cellX, cellY));
 
             RaisePropertyChanged(() => PlaygroundImageSource);
+        }
+
+        private bool CanToggleCellState(PlaygroundState playgroundState)
+        {
+            return !GameRunning;
+        }
+
+        private void ResetGame()
+        {
+            _playground = new Playground(_width, _height);
+            _playground.Configuration = UniverseConfiguration.Closed;
+            _gameEngine = new GameEngine(_playground);
+            PlaygroundImageSource = _playground.Body;
+            GameEnded = _gameEngine.GameEnded;
+            GameRunning = false;
         }
     }
 }

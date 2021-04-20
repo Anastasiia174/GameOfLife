@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using GalaSoft.MvvmLight.Threading;
 
 namespace GameOfLife.Views
 {
@@ -10,6 +11,8 @@ namespace GameOfLife.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            DispatcherHelper.Initialize();
         }
     }
 }

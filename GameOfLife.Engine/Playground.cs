@@ -21,6 +21,7 @@ namespace GameOfLife.Engine
             Height = height;
             _pixelsPerCell = pixelsPerCell;
             _borderWidth = borderWidth;
+            Configuration = configuration;
 
             CreatePlayground();
             _cells = InitializeCells();
@@ -31,6 +32,8 @@ namespace GameOfLife.Engine
         internal int Height { get; private set; }
 
         public Bitmap Body { get; private set; }
+
+        public UniverseConfiguration Configuration { get; set; }
 
         public void Update(Cell cell)
         {
@@ -53,17 +56,14 @@ namespace GameOfLife.Engine
         {
             // TODO implement logic for closed universe
 
-            if (x < 0 || x >= Width)
+            if (((x < 0 || x >= Width) || (y < 0 || y >= Height)) 
+                && Configuration == UniverseConfiguration.Limited)
             {
                 return null;
             }
 
-            if (y < 0 || y >= Width)
-            {
-                return null;
-            }
-
-            return _cells[x, y];
+            return _cells[x < 0 ? Width + x : x >= Width ? x % Width : x, 
+                y < 0 ? Height + y : y >= Height ? y % Height : y];
         }
 
         private void LoadGameFromBitmap(Bitmap playgroundBitmap)
