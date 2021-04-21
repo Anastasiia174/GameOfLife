@@ -9,11 +9,8 @@
         xmlns:helpers="clr-namespace:GameOfLife.Helpers"
         mc:Ignorable="d"
         Title="Game of life" Height="600" Width="900"
-        WindowStartupLocation="CenterScreen">
-
-    <Window.DataContext>
-        <viewModels:MainViewModel />
-    </Window.DataContext>
+        WindowStartupLocation="CenterScreen"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
 
     <Grid>
 
@@ -23,16 +20,16 @@
 
             <!--  these are the templates for the view models  -->
             <DataTemplate DataType="{x:Type viewModels:PlaygroundViewModel}">
-                <views:Playground DataContext="{Binding}" />
+                <views:Playground DataContext="{Binding Playground, Source={StaticResource Locator}}" />
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
-                <views:SettingsView DataContext="{Binding}" />
+                <views:SettingsView DataContext="{Binding Settings, Source={StaticResource Locator}}" />
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:SavesViewModel}">
-                <views:SavesView DataContext="{Binding}" />
+                <views:SavesView DataContext="{Binding Saves, Source={StaticResource Locator}}" />
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewModels:LogsViewModel}">
-                <views:LogsView DataContext="{Binding}" />
+                <views:LogsView DataContext="{Binding Logs, Source={StaticResource Locator}}" />
             </DataTemplate>
 
         </Grid.Resources>
@@ -44,7 +41,7 @@
                            ItemsSource="{Binding MenuItems}"
                            OptionsItemTemplate="{StaticResource MenuItemTemplate}"
                            OptionsItemsSource="{Binding MenuOptionItems}"
-                           SelectedIndex="1">
+                           SelectedIndex="0">
 
             <!--  select the ViewModel of the selected item (options item)  -->
             <mah:HamburgerMenu.Content>

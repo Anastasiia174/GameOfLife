@@ -11,9 +11,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <!--<vm:PlaygroundViewModel x:Key="Playground" />-->
-            <vm:MainViewModel x:Key="MainViewModel" />
+            
+            <vm:ViewModelLocator x:Key="Locator" />
 
             <helpers:BitmapToImageConverter x:Key="ImageConverter" />
             <helpers:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />

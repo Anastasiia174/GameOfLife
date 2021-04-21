@@ -16,38 +16,12 @@ namespace GameOfLife.ViewModels
 
         public MainViewModel()
         {
-            this.CreateMenuItems();
         }
 
-        public void CreateMenuItems()
+        public void CreateMenuItems(IEnumerable<MenuItemViewModel> menuItems, IEnumerable<MenuItemViewModel> menuOptionsItems)
         {
-            MenuItems = new ObservableCollection<MenuItemViewModel>
-            {
-                new PlaygroundViewModel(this)
-                {
-                    Icon = new PackIconMaterial() { Kind = PackIconMaterialKind.Gamepad },
-                    Label = "Play game",
-                },
-                new SavesViewModel(this)
-                {
-                    Icon = new PackIconMaterial() { Kind = PackIconMaterialKind.ContentSaveAll },
-                    Label = "Saved games",
-                },
-                new LogsViewModel(this)
-                {
-                    Icon = new PackIconMaterial() { Kind = PackIconMaterialKind.Server },
-                    Label = "Game logs",
-                },
-            };
-
-            MenuOptionItems = new ObservableCollection<MenuItemViewModel>
-            {
-                new SettingsViewModel(this)
-                {
-                    Icon = new PackIconMaterial() { Kind = PackIconMaterialKind.Cog },
-                    Label = "Settings",
-                }
-            };
+            MenuItems = new ObservableCollection<MenuItemViewModel>(menuItems);
+            MenuOptionItems = new ObservableCollection<MenuItemViewModel>(menuOptionsItems);
         }
 
         public ObservableCollection<MenuItemViewModel> MenuItems
