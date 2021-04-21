@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace GameOfLife.Engine
 {
@@ -8,7 +9,7 @@ namespace GameOfLife.Engine
 
         private readonly int _borderWidth;
 
-        private readonly Cell[,] _cells;
+        private Cell[,] _cells;
 
         public Playground(int width, int height)
         : this (width, height, 1, 0, UniverseConfiguration.Limited)
@@ -24,7 +25,7 @@ namespace GameOfLife.Engine
             Configuration = configuration;
 
             CreatePlayground();
-            _cells = InitializeCells();
+            InitializeCells();
         }
 
         internal int Width { get; private set; }
@@ -37,16 +38,18 @@ namespace GameOfLife.Engine
 
         public void Update(Cell cell)
         {
-            var graphics = Graphics.FromImage(Body);
+            using (var graphics = Graphics.FromImage(Body))
+            {
 
-            var currentColor = Body.GetPixel(cell.X, cell.Y);
+                var currentColor = Body.GetPixel(cell.X, cell.Y);
 
-            graphics.FillRectangle(
-                currentColor.ToArgb() == Color.DarkMagenta.ToArgb() ? Brushes.WhiteSmoke : Brushes.DarkMagenta,
-                cell.X,
-                cell.Y,
-                _pixelsPerCell,
-                _pixelsPerCell);
+                graphics.FillRectangle(
+                    currentColor.ToArgb() == Color.DarkMagenta.ToArgb() ? Brushes.WhiteSmoke : Brushes.DarkMagenta,
+                    cell.X,
+                    cell.Y,
+                    _pixelsPerCell,
+                    _pixelsPerCell);
+            }
 
             var cellToChange = GetCell(cell.X, cell.Y);
             cellToChange.IsAlive = !cellToChange.IsAlive;
@@ -71,9 +74,29 @@ namespace GameOfLife.Engine
             // TODO 
         }
 
-        private void LoadGameFromCells(Cell[,] cells)
+        public void LoadGameFromCells(Cell[,] cells)
         {
-            // TODO
+            if (cells.Rank != 2 
+                || cells.GetLength(0) != Width
+                || cells.GetLength(1) != Height)
+            {
+                throw new ArgumentException($"Parameter {nameof(cells)} has invalid rank or length.");
+            }
+
+            CreatePlayground();
+
+            for (int x = 0; x < cells.GetLength(0); x++)
+            {
+                for (int y = 0; y < cells.GetLength(1); y++)
+                {
+                    var newCell = cells[x, y];
+                    
+                    if (newCell.IsAlive)
+                    {
+                        Update(newCell);
+                    }
+                }
+            }
         }
 
         private void CreatePlayground()
@@ -83,9 +106,10 @@ namespace GameOfLife.Engine
 
             var bitmap = new Bitmap(imageWidth, imageHeight);
 
-            var graphics = Graphics.FromImage(bitmap);
-
-            graphics.FillRectangle(Brushes.WhiteSmoke, 0, 0, imageWidth, imageHeight);
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.FillRectangle(Brushes.WhiteSmoke, 0, 0, imageWidth, imageHeight);
+            }
 
             //for (int y = 0; y < imageHeight; y += _pixelsPerCell)
             //{
@@ -100,19 +124,17 @@ namespace GameOfLife.Engine
             Body = bitmap;
         }
 
-        private Cell[,] InitializeCells()
+        private void InitializeCells()
         {
-            var cells = new Cell[Width, Height];
+            _cells = new Cell[Width, Height];
 
             for (var x = 0; x < Width; x++)
             {
                 for (var y = 0; y < Height; y++)
                 {
-                    cells[x, y] = new Cell(x, y, false);
+                    _cells[x, y] = new Cell(x, y, false);
                 }
             }
-
-            return cells;
         }
     }
 }

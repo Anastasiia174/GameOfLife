@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace GameOfLife.ViewModels
         private readonly DispatcherTimer _timer;
 
         public PlaygroundViewModel()
-        : this(10, 10)
+        : this(1000, 1000)
         {
         }
 
@@ -39,10 +40,10 @@ namespace GameOfLife.ViewModels
 
             _playground = new Playground(_width, _height);
             _gameEngine = new GameEngine(_playground);
-            _playground.Configuration = UniverseConfiguration.Closed;
+            //_playground.Configuration = UniverseConfiguration.Closed;
             PlaygroundImageSource = _playground.Body;
 
-            _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
+            _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(1000) };
             _timer.Tick += UpdatePlayground;
         }
 
@@ -50,10 +51,7 @@ namespace GameOfLife.ViewModels
 
         public Bitmap PlaygroundImageSource
         {
-            get
-            {
-                return _playgroundImageSource;
-            }
+            get => _playgroundImageSource;
             set
             {
                 Set(() => PlaygroundImageSource, ref _playgroundImageSource, value);
@@ -64,10 +62,7 @@ namespace GameOfLife.ViewModels
 
         public CellPosition SelectedCell
         {
-            get
-            {
-                return _selectedCell;
-            }
+            get => _selectedCell;
             set
             {
                 Set(() => SelectedCell, ref _selectedCell, value);
@@ -78,10 +73,7 @@ namespace GameOfLife.ViewModels
 
         public bool GameEnded
         {
-            get
-            {
-                return _gameEnded;
-            }
+            get => _gameEnded;
             set
             {
                 Set(() => GameEnded, ref _gameEnded, value);
@@ -93,10 +85,7 @@ namespace GameOfLife.ViewModels
 
         public bool GameRunning
         {
-            get
-            {
-                return _gameRunning;
-            }
+            get => _gameRunning;
             set
             {
                 Set(() => GameRunning, ref _gameRunning, value);
@@ -105,54 +94,37 @@ namespace GameOfLife.ViewModels
 
         private RelayCommand _startCommand;
 
-        public RelayCommand StartCommand
-        {
-            get
-            {
-                return _startCommand ??
-                       (_startCommand = new RelayCommand(StartGame, CanStartGame));
-            }
-
-        }
+        public RelayCommand StartCommand =>
+            _startCommand ??
+            (_startCommand = new RelayCommand(StartGame, CanStartGame));
 
         private RelayCommand _pauseCommand;
 
-        public RelayCommand PauseCommand
-        {
-            get
-            {
-                return _pauseCommand ??
-                       (_pauseCommand = new RelayCommand(PauseGame, CanPauseGame));
-            }
-        }
+        public RelayCommand PauseCommand =>
+            _pauseCommand ??
+            (_pauseCommand = new RelayCommand(PauseGame, CanPauseGame));
 
         private RelayCommand _resetCommand;
 
-        public RelayCommand ResetCommand
-        {
-            get
-            {
-                return _resetCommand ??
-                       (new RelayCommand(ResetGame));
-            }
-        }
+        public RelayCommand ResetCommand =>
+            _resetCommand ??
+            (_resetCommand = new RelayCommand(ResetGame));
 
         public RelayCommand SaveCommand { get; private set; }
 
         public RelayCommand ChangeConfigurationCommand { get; private set; }
 
-        public RelayCommand RandomizeCellsCommand { get; private set; }
+        private RelayCommand _randomizeCellsCommand;
+
+        public RelayCommand RandomizeCellsCommand =>
+            _randomizeCellsCommand ??
+            (_randomizeCellsCommand = new RelayCommand(RandomizeCells, CanRandomizeCells));
 
         private RelayCommand<PlaygroundState> _toggleCellStateCommand;
 
-        public RelayCommand<PlaygroundState> ToggleCellStateCommand
-        {
-            get
-            {
-                return _toggleCellStateCommand ??
-                       (_toggleCellStateCommand = new RelayCommand<PlaygroundState>(ToggleCellState, CanToggleCellState));
-            }
-        }
+        public RelayCommand<PlaygroundState> ToggleCellStateCommand =>
+            _toggleCellStateCommand ??
+            (_toggleCellStateCommand = new RelayCommand<PlaygroundState>(ToggleCellState, CanToggleCellState));
 
         private void StartGame()
         {
@@ -167,6 +139,8 @@ namespace GameOfLife.ViewModels
 
         private async void UpdatePlayground(object sender, object e)
         {
+            System.Diagnostics.Debug.WriteLine("Start updating playground...");
+            var timer = Stopwatch.StartNew();
             await Task.Factory.StartNew(() =>
             {
                 {
@@ -174,6 +148,7 @@ namespace GameOfLife.ViewModels
                 }
             });
 
+            System.Diagnostics.Debug.WriteLine($"End updating playground... Updated in {timer.ElapsedMilliseconds}ms");
             RaisePropertyChanged(() => PlaygroundImageSource);
             GameEnded = _gameEngine.GameEnded;
 
@@ -218,11 +193,35 @@ namespace GameOfLife.ViewModels
         private void ResetGame()
         {
             _playground = new Playground(_width, _height);
-            _playground.Configuration = UniverseConfiguration.Closed;
+            //_playground.Configuration = UniverseConfiguration.Closed;
             _gameEngine = new GameEngine(_playground);
             PlaygroundImageSource = _playground.Body;
             GameEnded = _gameEngine.GameEnded;
             GameRunning = false;
+        }
+
+        private void RandomizeCells()
+        {
+            var randomCells = new Cell[_width, _height];
+
+            var random = new Random((int)DateTime.Now.Ticks);
+            for (int x = 0; x < randomCells.GetLength(0); x++)
+            {
+                for (int y = 0; y < randomCells.GetLength(1); y++)
+                {
+                    randomCells[x, y] = new Cell(x, y, random.Next(2) == 1);
+                }
+            }
+
+            _playground.LoadGameFromCells(randomCells);
+            _gameEngine = new GameEngine(_playground);
+
+            PlaygroundImageSource = _playground.Body;
+        }
+
+        private bool CanRandomizeCells()
+        {
+            return !GameRunning;
         }
     }
 }
