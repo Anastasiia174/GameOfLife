@@ -21,7 +21,7 @@ namespace GameOfLife.ViewModels
 
             var defaultConfiguration = new GameConfiguration(20, 20, UniverseConfiguration.Limited, false);
             var main = new MainViewModel();
-            var playground = new PlaygroundViewModel(defaultConfiguration.Width, defaultConfiguration.Height, main);
+            var playground = new PlaygroundViewModel(defaultConfiguration, main);
             var settings = new SettingsViewModel(defaultConfiguration, main);
             var saves = new SavesViewModel(main);
             var logs = new LogsViewModel(main);

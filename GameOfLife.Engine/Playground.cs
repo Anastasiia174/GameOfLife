@@ -5,23 +5,18 @@ namespace GameOfLife.Engine
 {
     public class Playground
     {
-        private readonly int _pixelsPerCell;
+        private const int PixelsPerCell = 1;
 
-        private readonly int _borderWidth;
+        //private readonly int _borderWidth;
 
         private Cell[,] _cells;
 
-        public Playground(int width, int height)
-        : this (width, height, 1, 0, UniverseConfiguration.Limited)
-        {
-        }
-
-        public Playground(int width, int height, int pixelsPerCell, int borderWidth, UniverseConfiguration configuration)
+        public Playground(int width, int height, UniverseConfiguration configuration = UniverseConfiguration.Limited)
         {
             Width = width;
             Height = height;
-            _pixelsPerCell = pixelsPerCell;
-            _borderWidth = borderWidth;
+
+            //_borderWidth = borderWidth;
             Configuration = configuration;
 
             CreatePlayground();
@@ -47,8 +42,8 @@ namespace GameOfLife.Engine
                     currentColor.ToArgb() == Color.DarkMagenta.ToArgb() ? Brushes.WhiteSmoke : Brushes.DarkMagenta,
                     cell.X,
                     cell.Y,
-                    _pixelsPerCell,
-                    _pixelsPerCell);
+                    PixelsPerCell,
+                    PixelsPerCell);
             }
 
             var cellToChange = GetCell(cell.X, cell.Y);
@@ -101,8 +96,8 @@ namespace GameOfLife.Engine
 
         private void CreatePlayground()
         {
-            var imageWidth = Width * _pixelsPerCell + _borderWidth;
-            var imageHeight = Height * _pixelsPerCell + _borderWidth;
+            var imageWidth = Width * PixelsPerCell /*+ _borderWidth*/;
+            var imageHeight = Height * PixelsPerCell /*+ _borderWidth*/;
 
             var bitmap = new Bitmap(imageWidth, imageHeight);
 

@@ -67,9 +67,7 @@
                     Command="{Binding ResetCommand}"/>
             <Button Content="Save" Grid.Column="7" Grid.Row="1" 
                     Command="{Binding SaveCommand}"/>
-            <Button Content="Change conf" Grid.Column="9" Grid.Row="1" 
-                    Command="{Binding ChangeConfigurationCommand}"/>
-            <Button Content="Random" Grid.Column="11" Grid.Row="1" 
+            <Button Content="Random" Grid.Column="9" Grid.Row="1" 
                     Command="{Binding RandomizeCellsCommand}"/>
         </Grid>
     </Grid>

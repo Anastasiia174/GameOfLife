@@ -18,29 +18,28 @@ namespace GameOfLife.ViewModels
 {
     public class PlaygroundViewModel : MenuItemViewModel
     {
+        private readonly DispatcherTimer _timer;
+
         private int _width;
 
         private int _height;
+
+        private UniverseConfiguration _universeConfiguration;
 
         private IGameEngine _gameEngine;
 
         private Playground _playground;
 
-        private readonly DispatcherTimer _timer;
-
-        public PlaygroundViewModel(MainViewModel mainViewModel)
-        : this(10, 10, mainViewModel)
+        public PlaygroundViewModel(GameConfiguration configuration, MainViewModel mainViewModel) : base(mainViewModel)
         {
-        }
+            _width = configuration.Width;
+            _height = configuration.Height;
+            _universeConfiguration = configuration.UniverseConfiguration;
+            _isEditable = configuration.IsEditable;
 
-        public PlaygroundViewModel(int width, int height, MainViewModel mainViewModel) : base(mainViewModel)
-        {
-            _width = width;
-            _height = height;
-
-            _playground = new Playground(_width, _height);
+            _playground = new Playground(_width, _height, _universeConfiguration);
             _gameEngine = new GameEngine(_playground);
-            //_playground.Configuration = UniverseConfiguration.Closed;
+            
             PlaygroundImageSource = _playground.Body;
 
             _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(1000) };
@@ -92,49 +91,67 @@ namespace GameOfLife.ViewModels
             }
         }
 
+        private bool _gameStarted;
+
+        public bool GameStarted
+        {
+            get => _gameStarted;
+            set
+            {
+                Set(() => GameStarted, ref _gameStarted, value);
+            }
+        }
+
+        private bool _isEditable;
+
+        public bool IsEditable
+        {
+            get => _isEditable;
+            set
+            {
+                Set(() => IsEditable, ref _isEditable, value);
+            }
+        }
+
         private RelayCommand _startCommand;
 
         public RelayCommand StartCommand =>
             _startCommand ??
-            (_startCommand = new RelayCommand(StartGame, CanStartGame));
+            (_startCommand = new RelayCommand(StartGame, () => !GameEnded && !GameRunning));
 
         private RelayCommand _pauseCommand;
 
         public RelayCommand PauseCommand =>
             _pauseCommand ??
-            (_pauseCommand = new RelayCommand(PauseGame, CanPauseGame));
+            (_pauseCommand = new RelayCommand(PauseGame, () => GameRunning));
 
         private RelayCommand _resetCommand;
 
         public RelayCommand ResetCommand =>
             _resetCommand ??
-            (_resetCommand = new RelayCommand(ResetGame));
+            (_resetCommand = new RelayCommand(ResetGame, () => !GameRunning));
 
         public RelayCommand SaveCommand { get; private set; }
-
-        public RelayCommand ChangeConfigurationCommand { get; private set; }
 
         private RelayCommand _randomizeCellsCommand;
 
         public RelayCommand RandomizeCellsCommand =>
             _randomizeCellsCommand ??
-            (_randomizeCellsCommand = new RelayCommand(RandomizeCells, CanRandomizeCells));
+            (_randomizeCellsCommand = new RelayCommand(RandomizeCells, () => !GameRunning && !GameStarted));
 
         private RelayCommand<PlaygroundState> _toggleCellStateCommand;
 
         public RelayCommand<PlaygroundState> ToggleCellStateCommand =>
             _toggleCellStateCommand ??
-            (_toggleCellStateCommand = new RelayCommand<PlaygroundState>(ToggleCellState, CanToggleCellState));
+            (_toggleCellStateCommand = new RelayCommand<PlaygroundState>(
+                ToggleCellState, 
+                (state) => !GameStarted || (!GameRunning && IsEditable)));
 
         private void StartGame()
         {
             _timer.Start();
             GameRunning = true;
-        }
-
-        private bool CanStartGame()
-        {
-            return !GameEnded && !GameRunning;
+            GameStarted = true;
         }
 
         private async void UpdatePlayground(object sender, object e)
@@ -165,11 +182,6 @@ namespace GameOfLife.ViewModels
             GameRunning = false;
         }
 
-        private bool CanPauseGame()
-        {
-            return GameRunning;
-        }
-
         private void ToggleCellState(PlaygroundState playgroundState)
         {
             var cellWidth = playgroundState.Width / _width;
@@ -185,19 +197,15 @@ namespace GameOfLife.ViewModels
             RaisePropertyChanged(() => PlaygroundImageSource);
         }
 
-        private bool CanToggleCellState(PlaygroundState playgroundState)
-        {
-            return !GameRunning;
-        }
-
         private void ResetGame()
         {
-            _playground = new Playground(_width, _height);
-            //_playground.Configuration = UniverseConfiguration.Closed;
+            _playground = new Playground(_width, _height, _universeConfiguration);
             _gameEngine = new GameEngine(_playground);
+
             PlaygroundImageSource = _playground.Body;
             GameEnded = _gameEngine.GameEnded;
             GameRunning = false;
+            GameStarted = false;
         }
 
         private void RandomizeCells()
@@ -219,9 +227,13 @@ namespace GameOfLife.ViewModels
             PlaygroundImageSource = _playground.Body;
         }
 
-        private bool CanRandomizeCells()
+        private void ChangeConfiguration(GameConfiguration configuration)
         {
-            return !GameRunning;
+            _width = configuration.Width;
+            _height = configuration.Height;
+            _universeConfiguration = configuration.UniverseConfiguration;
+
+            ResetGame();
         }
     }
 }
