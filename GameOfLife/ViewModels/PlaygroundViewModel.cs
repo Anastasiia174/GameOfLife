@@ -16,7 +16,7 @@ using GameOfLife.Infrastructure;
 
 namespace GameOfLife.ViewModels
 {
-    public class PlaygroundViewModel : ViewModelBase
+    public class PlaygroundViewModel : MenuItemViewModel
     {
         private int _width;
 
@@ -28,12 +28,12 @@ namespace GameOfLife.ViewModels
 
         private readonly DispatcherTimer _timer;
 
-        public PlaygroundViewModel()
-        : this(1000, 1000)
+        public PlaygroundViewModel(MainViewModel mainViewModel)
+        : this(10, 10, mainViewModel)
         {
         }
 
-        public PlaygroundViewModel(int width, int height)
+        public PlaygroundViewModel(int width, int height, MainViewModel mainViewModel) : base(mainViewModel)
         {
             _width = width;
             _height = height;

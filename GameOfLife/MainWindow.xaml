@@ -1,0 +1,65 @@
+﻿<mah:MetroWindow x:Class="GameOfLife.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:views="clr-namespace:GameOfLife.Views"
+        xmlns:viewModels="clr-namespace:GameOfLife.ViewModels" 
+        xmlns:helpers="clr-namespace:GameOfLife.Helpers"
+        mc:Ignorable="d"
+        Title="Game of life" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <viewModels:MainViewModel />
+    </Window.DataContext>
+
+    <Grid>
+
+        <Grid.Resources>
+
+            <helpers:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
+
+            <!--  these are the templates for the view models  -->
+            <DataTemplate DataType="{x:Type viewModels:PlaygroundViewModel}">
+                <views:Playground DataContext="{Binding}" />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
+                <views:SettingsView DataContext="{Binding}" />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:SavesViewModel}">
+                <views:SavesView DataContext="{Binding}" />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:LogsViewModel}">
+                <views:LogsView DataContext="{Binding}" />
+            </DataTemplate>
+
+        </Grid.Resources>
+
+        <mah:HamburgerMenu x:Name="HamburgerMenuControl"
+                           DisplayMode="CompactInline"
+                           IsPaneOpen="False"
+                           ItemTemplate="{StaticResource MenuItemTemplate}"
+                           ItemsSource="{Binding MenuItems}"
+                           OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                           OptionsItemsSource="{Binding MenuOptionItems}"
+                           SelectedIndex="1">
+
+            <!--  select the ViewModel of the selected item (options item)  -->
+            <mah:HamburgerMenu.Content>
+                <MultiBinding Converter="{StaticResource SelectedItemToContentConverter}">
+                    <Binding FallbackValue="{x:Null}"
+                             Mode="OneWay"
+                             Path="SelectedItem"
+                             RelativeSource="{RelativeSource Self}" />
+                    <Binding FallbackValue="{x:Null}"
+                             Mode="OneWay"
+                             Path="SelectedOptionsItem"
+                             RelativeSource="{RelativeSource Self}" />
+                </MultiBinding>
+            </mah:HamburgerMenu.Content>
+
+        </mah:HamburgerMenu>
+    </Grid>
+</mah:MetroWindow>

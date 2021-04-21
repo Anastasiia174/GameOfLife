@@ -1,19 +1,18 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using GalaSoft.MvvmLight.Threading;
 using MahApps.Metro.Controls;
 
 namespace GameOfLife.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Playground.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class Playground : UserControl
     {
-        public MainWindow()
+        public Playground()
         {
             InitializeComponent();
-
-            DispatcherHelper.Initialize();
         }
     }
 }

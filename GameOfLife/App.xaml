@@ -4,14 +4,19 @@
              xmlns:local="clr-namespace:GameOfLife"
              xmlns:System="clr-namespace:System;assembly=mscorlib" 
              xmlns:vm="clr-namespace:GameOfLife.ViewModels"
-             StartupUri="Views/Playground.xaml">
+             xmlns:helpers="clr-namespace:GameOfLife.Helpers"
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <vm:PlaygroundViewModel x:Key="Playground" />
+            <!--<vm:PlaygroundViewModel x:Key="Playground" />-->
+            <vm:MainViewModel x:Key="MainViewModel" />
+
+            <helpers:BitmapToImageConverter x:Key="ImageConverter" />
+            <helpers:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
 
         </ResourceDictionary>
     </Application.Resources>
