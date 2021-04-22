@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using GameOfLife.Engine;
 using GameOfLife.Infrastructure;
@@ -42,8 +43,12 @@ namespace GameOfLife.ViewModels
             
             PlaygroundImageSource = _playground.Body;
 
-            _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(1000) };
+            _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
             _timer.Tick += UpdatePlayground;
+
+            Messenger.Default.Register<ConfigMessage>(
+                this, 
+                message => ChangeConfiguration(message.Configuration));
         }
 
         private Bitmap _playgroundImageSource;
@@ -156,8 +161,8 @@ namespace GameOfLife.ViewModels
 
         private async void UpdatePlayground(object sender, object e)
         {
-            System.Diagnostics.Debug.WriteLine("Start updating playground...");
-            var timer = Stopwatch.StartNew();
+            //System.Diagnostics.Debug.WriteLine("Start updating playground...");
+            //var timer = Stopwatch.StartNew();
             await Task.Factory.StartNew(() =>
             {
                 {
@@ -165,7 +170,7 @@ namespace GameOfLife.ViewModels
                 }
             });
 
-            System.Diagnostics.Debug.WriteLine($"End updating playground... Updated in {timer.ElapsedMilliseconds}ms");
+            //System.Diagnostics.Debug.WriteLine($"End updating playground... Updated in {timer.ElapsedMilliseconds}ms");
             RaisePropertyChanged(() => PlaygroundImageSource);
             GameEnded = _gameEngine.GameEnded;
 
@@ -232,6 +237,7 @@ namespace GameOfLife.ViewModels
             _width = configuration.Width;
             _height = configuration.Height;
             _universeConfiguration = configuration.UniverseConfiguration;
+            IsEditable = configuration.IsEditable;
 
             ResetGame();
         }
