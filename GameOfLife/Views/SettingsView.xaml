@@ -56,7 +56,7 @@
                           SelectedItem="{Binding UniverseConfiguration}"></ComboBox>
             </Grid>
             <Button Content="Apply" Width="100"
-                    Command="{Binding Settings.SaveCommand, Source={StaticResource Locator}}"></Button>
+                    Command="{Binding Settings.ApplyCommand, Source={StaticResource Locator}}"></Button>
         </StackPanel>
     </Grid>
 </UserControl>

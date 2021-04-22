@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GameOfLife.Engine;
 using GameOfLife.Infrastructure;
@@ -31,7 +26,7 @@ namespace GameOfLife.ViewModels
             {
                 Set(() => Width, ref _width, value);
                 IsChanged = true;
-                SaveCommand.RaiseCanExecuteChanged();
+                ApplyCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -44,7 +39,7 @@ namespace GameOfLife.ViewModels
             {
                 Set(() => Height, ref _height, value);
                 IsChanged = true;
-                SaveCommand.RaiseCanExecuteChanged();
+                ApplyCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -57,7 +52,7 @@ namespace GameOfLife.ViewModels
             {
                 Set(() => IsEditable, ref _isEditable, value);
                 IsChanged = true;
-                SaveCommand.RaiseCanExecuteChanged();
+                ApplyCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -70,7 +65,7 @@ namespace GameOfLife.ViewModels
             {
                 Set(() => UniverseConfiguration, ref _universeConfiguration, value);
                 IsChanged = true;
-                SaveCommand.RaiseCanExecuteChanged();
+                ApplyCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -85,11 +80,11 @@ namespace GameOfLife.ViewModels
             }
         }
 
-        private RelayCommand _saveCommand;
+        private RelayCommand _applyCommand;
 
-        public RelayCommand SaveCommand =>
-            _saveCommand ??
-            (_saveCommand = new RelayCommand(SaveConfiguration, () => IsChanged));
+        public RelayCommand ApplyCommand =>
+            _applyCommand ??
+            (_applyCommand = new RelayCommand(SaveConfiguration, () => IsChanged));
 
         private void SaveConfiguration()
         {
@@ -99,7 +94,7 @@ namespace GameOfLife.ViewModels
             Messenger.Default.Send(message);
 
             IsChanged = false;
-            SaveCommand.RaiseCanExecuteChanged();
+            ApplyCommand.RaiseCanExecuteChanged();
         }
     }
 }
