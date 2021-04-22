@@ -7,6 +7,35 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-          <TextBlock Text="Saves table" FontSize="32"></TextBlock>  
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition />
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="Game saves" Style="{StaticResource HeaderTextBlockStyle}"></TextBlock>
+        
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Vertical">
+            <Button Content="Load" Margin="0 10 0 10" Width="100" Command="{Binding LoadCommand}"></Button>
+            <Button Content="Load random" Margin="0 0 0 10" Width="100" Command="{Binding LoadRandomCommand}"></Button>
+            <Button Content="Remove" Width="100" Command="{Binding RemoveCommand}"></Button>
+        </StackPanel>
+
+        <DataGrid  Grid.Column="3" Grid.Row="3" AutoGenerateColumns="False" ItemsSource="{Binding Saves}" SelectedItem="{Binding SelectedSave}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding SaveTitle}" Header="Title" Width="*"/>
+                <DataGridTextColumn Binding="{Binding SaveDtm}" Header="Date Time" Width="*"/>
+                <DataGridTextColumn Binding="{Binding SaveGeneration}" Header="Generations" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>

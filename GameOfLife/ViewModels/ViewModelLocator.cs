@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Navigation;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
+using GameOfLife.Data;
 using GameOfLife.Engine;
 using GameOfLife.Infrastructure;
 using MahApps.Metro.IconPacks;
@@ -20,10 +21,13 @@ namespace GameOfLife.ViewModels
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             var defaultConfiguration = new GameConfiguration(20, 20, UniverseConfiguration.Limited, false);
+
+            IGameRepository gameRepository = new GameRepository(new GameContext());
+
             var main = new MainViewModel();
             var playground = new PlaygroundViewModel(defaultConfiguration, main);
             var settings = new SettingsViewModel(defaultConfiguration, main);
-            var saves = new SavesViewModel(main);
+            var saves = new SavesViewModel(gameRepository, main);
             var logs = new LogsViewModel(main);
 
             SimpleIoc.Default.Register<MainViewModel>(() => main);
@@ -35,7 +39,7 @@ namespace GameOfLife.ViewModels
             main.CreateMenuItems(
                 new List<MenuItemViewModel>()
                 {
-                    playground.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.Gamepad }, "Play game"), 
+                    playground.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.MicrosoftXboxController }, "Play game"), 
                     saves.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.ContentSaveAll }, "Saved games"), 
                     logs.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.Server }, "Game logs")
                 },

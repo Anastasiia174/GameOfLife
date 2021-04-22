@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,14 @@ namespace GameOfLife.Data
         }
 
         public DbSet<Save> Saves { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Save>()
+                .Property(p => p.SaveId)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+        }
     }
 }

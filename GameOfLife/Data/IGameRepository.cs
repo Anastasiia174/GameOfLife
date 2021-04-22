@@ -16,5 +16,7 @@ namespace GameOfLife.Data
         Save GetSaveById(int id);
 
         void AddSave(Save newSave);
+
+        void RemoveSave(Save saveToRemove);
     }
 }

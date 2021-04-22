@@ -38,5 +38,10 @@ namespace GameOfLife.Data
         {
             _context.Saves.Add(newSave);
         }
+
+        public void RemoveSave(Save saveToRemove)
+        {
+            _context.Saves.Remove(saveToRemove);
+        }
     }
 }
