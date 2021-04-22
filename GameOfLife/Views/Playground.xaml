@@ -25,8 +25,8 @@
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="1" Grid.Row="1" DockPanel.Dock="Top" Orientation="Horizontal">
-            <TextBlock Text="{Binding SelectedCell.X, StringFormat='X={0}'}" />
-            <TextBlock Text="{Binding SelectedCell.Y, StringFormat='y={0}'}" />
+            <Label Margin="0 0 10 0" VerticalAlignment="Center">Generation:</Label>
+            <TextBlock Text="{Binding GenerationNumber}" VerticalAlignment="Center"/>
         </StackPanel>
         <Grid Grid.Column="1" Grid.Row="2" Name="PlaygroundGrid" Height="Auto">
             <ScrollViewer HorizontalScrollBarVisibility="Auto">

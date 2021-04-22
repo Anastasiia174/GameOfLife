@@ -62,14 +62,14 @@ namespace GameOfLife.ViewModels
             }
         }
 
-        private CellPosition _selectedCell;
+        private int _generationNumber;
 
-        public CellPosition SelectedCell
+        public int GenerationNumber
         {
-            get => _selectedCell;
+            get => _generationNumber;
             set
             {
-                Set(() => SelectedCell, ref _selectedCell, value);
+                Set(() => GenerationNumber, ref _generationNumber, value);
             }
         }
 
@@ -136,7 +136,12 @@ namespace GameOfLife.ViewModels
             _resetCommand ??
             (_resetCommand = new RelayCommand(ResetGame, () => !GameRunning));
 
-        public RelayCommand SaveCommand { get; private set; }
+        private RelayCommand _saveCommand;
+
+        public RelayCommand SaveCommand =>
+            _saveCommand ??
+            (_saveCommand = new RelayCommand(SaveGame, () => !GameRunning && GameStarted));
+        
 
         private RelayCommand _randomizeCellsCommand;
 
@@ -161,8 +166,6 @@ namespace GameOfLife.ViewModels
 
         private async void UpdatePlayground(object sender, object e)
         {
-            //System.Diagnostics.Debug.WriteLine("Start updating playground...");
-            //var timer = Stopwatch.StartNew();
             await Task.Factory.StartNew(() =>
             {
                 {
@@ -170,9 +173,9 @@ namespace GameOfLife.ViewModels
                 }
             });
 
-            //System.Diagnostics.Debug.WriteLine($"End updating playground... Updated in {timer.ElapsedMilliseconds}ms");
             RaisePropertyChanged(() => PlaygroundImageSource);
             GameEnded = _gameEngine.GameEnded;
+            GenerationNumber = _gameEngine.CurrentGenerationNumber;
 
             if (GameEnded)
             {
@@ -195,8 +198,6 @@ namespace GameOfLife.ViewModels
             var cellX = (int)(playgroundState.ActiveCell.X / cellWidth);
             var cellY = (int)(playgroundState.ActiveCell.Y / cellHeight);
 
-            SelectedCell = playgroundState.ActiveCell;
-
             _gameEngine.ChangeUniverseState(new Cell(cellX, cellY));
 
             RaisePropertyChanged(() => PlaygroundImageSource);
@@ -211,6 +212,7 @@ namespace GameOfLife.ViewModels
             GameEnded = _gameEngine.GameEnded;
             GameRunning = false;
             GameStarted = false;
+            GenerationNumber = _gameEngine.CurrentGenerationNumber;
         }
 
         private void RandomizeCells()
@@ -240,6 +242,11 @@ namespace GameOfLife.ViewModels
             IsEditable = configuration.IsEditable;
 
             ResetGame();
+        }
+
+        private void SaveGame()
+        {
+            
         }
     }
 }
