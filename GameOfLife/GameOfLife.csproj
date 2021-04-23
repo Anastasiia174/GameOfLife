@@ -197,6 +197,9 @@
     <Compile Include="Extensions\ImageExtension.cs" />
     <Compile Include="Infrastructure\ConfigMessage.cs" />
     <Compile Include="Infrastructure\GameConfiguration.cs" />
+    <Compile Include="Infrastructure\LoadSaveMessage.cs" />
+    <Compile Include="Services\GameSaveService.cs" />
+    <Compile Include="Services\IGameSaveService.cs" />
     <Compile Include="ViewModels\LogsViewModel.cs" />
     <Compile Include="ViewModels\SavesViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />

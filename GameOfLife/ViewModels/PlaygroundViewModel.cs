@@ -14,11 +14,14 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Threading;
 using GameOfLife.Engine;
 using GameOfLife.Infrastructure;
+using GameOfLife.Services;
 
 namespace GameOfLife.ViewModels
 {
     public class PlaygroundViewModel : MenuItemViewModel
     {
+        private readonly IGameSaveService _gameSaveService;
+
         private readonly DispatcherTimer _timer;
 
         private readonly IGameEngine _gameEngine;
@@ -29,8 +32,9 @@ namespace GameOfLife.ViewModels
 
         private UniverseConfiguration _universeConfiguration;
 
-        public PlaygroundViewModel(GameConfiguration configuration, MainViewModel mainViewModel) : base(mainViewModel)
+        public PlaygroundViewModel(GameConfiguration configuration, IGameSaveService gameSaveService, MainViewModel mainViewModel) : base(mainViewModel)
         {
+            _gameSaveService = gameSaveService;
             _width = configuration.Width;
             _height = configuration.Height;
             _universeConfiguration = configuration.UniverseConfiguration;
@@ -46,6 +50,11 @@ namespace GameOfLife.ViewModels
             Messenger.Default.Register<ConfigMessage>(
                 this, 
                 message => ChangeConfiguration(message.Configuration));
+
+            Messenger.Default.Register<LoadSaveMessage>(
+                this,
+                message =>
+                LoadGameSave(message.GameToSave));
         }
 
         private Bitmap _playgroundImageSource;
@@ -231,7 +240,16 @@ namespace GameOfLife.ViewModels
 
         private void SaveGame()
         {
+            var gameSave = _gameEngine.SaveGame();
+            _gameSaveService.SaveGameSave(gameSave);
+        }
 
+        private void LoadGameSave(GameSave save)
+        {
+            _gameEngine.LoadGame(save);
+            GenerationNumber = _gameEngine.CurrentGenerationNumber;
+            GameEnded = _gameEngine.GameEnded;
+            PlaygroundImageSource = _gameEngine.Playground;
         }
     }
 }

@@ -5,37 +5,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Command;
-using GameOfLife.Data;
-using GameOfLife.Data.Entities;
+using GalaSoft.MvvmLight.Messaging;
+using GameOfLife.Engine;
+using GameOfLife.Infrastructure;
+using GameOfLife.Services;
 
 namespace GameOfLife.ViewModels
 {
     public class SavesViewModel : MenuItemViewModel
     {
-        private readonly IGameRepository _gameRepository;
+        private readonly IGameSaveService _gameSaveService;
 
-        public SavesViewModel(IGameRepository gameRepository, MainViewModel mainViewModel) : base(mainViewModel)
+        public SavesViewModel(IGameSaveService gameSaveService, MainViewModel mainViewModel) : base(mainViewModel)
         {
-            _gameRepository = gameRepository;
-
-            var saves = _gameRepository.GetAllSaves();
-            Saves = new ObservableCollection<Save>(saves);
+            _gameSaveService = gameSaveService;
         }
 
-        private ObservableCollection<Save> _saves;
+        private ObservableCollection<GameSave> _saves;
 
-        public ObservableCollection<Save> Saves
+        public ObservableCollection<GameSave> Saves
         {
-            get => _saves;
+            get => _saves ?? (_saves = new ObservableCollection<GameSave>(_gameSaveService.GetAllGameSaves()));
             set
             {
                 Set(() => Saves, ref _saves, value);
             }
         }
 
-        private Save _selectedSave;
+        private GameSave _selectedSave;
 
-        public Save SelectedSave
+        public GameSave SelectedSave
         {
             get => _selectedSave;
             set
@@ -48,13 +47,13 @@ namespace GameOfLife.ViewModels
 
         public RelayCommand LoadCommand =>
             _loadCommand ??
-            (_loadCommand = new RelayCommand(LoadSave));
+            (_loadCommand = new RelayCommand(LoadSave, () => Saves.Any()));
 
         private RelayCommand _loadRandomCommand;
 
         public RelayCommand LoadRandomCommand =>
             _loadRandomCommand ??
-            (_loadRandomCommand = new RelayCommand(LoadRandom));
+            (_loadRandomCommand = new RelayCommand(LoadRandom, () => Saves.Any()));
 
         private RelayCommand _removeCommand;
 
@@ -64,17 +63,22 @@ namespace GameOfLife.ViewModels
 
         private void LoadSave()
         {
-
+            var saveMessage = new LoadSaveMessage(SelectedSave);
+            Messenger.Default.Send<LoadSaveMessage>(saveMessage);
         }
 
         private void LoadRandom()
         {
-
+            var random = new Random((int)DateTime.Now.Ticks);
+            var randomSave = Saves.ElementAt(random.Next(Saves.Count));
+            var saveMessage = new LoadSaveMessage(randomSave);
+            Messenger.Default.Send<LoadSaveMessage>(saveMessage);
         }
 
         private void RemoveSave()
         {
-            
+            _gameSaveService.RemoveGameSave(SelectedSave);
+            Saves.Remove(SelectedSave);
         }
     }
 }

@@ -66,7 +66,24 @@ namespace GameOfLife.Engine
 
         public void LoadGameFromBitmap(Bitmap playgroundBitmap)
         {
-            // TODO 
+            Width = playgroundBitmap.Width;
+            Height = playgroundBitmap.Height;
+
+            InitializeCells();
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    var pixelColor = playgroundBitmap.GetPixel(x, y);
+                    if (pixelColor.ToArgb() == Color.DarkMagenta.ToArgb())
+                    {
+                        _cells[x, y].IsAlive = true;
+                    }
+                }
+            }
+
+            Body = playgroundBitmap;
         }
 
         public void LoadGameFromCells(Cell[,] cells)
