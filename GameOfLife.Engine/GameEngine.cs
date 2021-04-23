@@ -1,20 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace GameOfLife.Engine
 {
     public class GameEngine : IGameEngine
     {
-        private readonly Playground _playground;
+        private readonly int _width;
+        private readonly int _height;
+        private readonly UniverseConfiguration _configuration;
+        private Playground _playground;
 
-        public GameEngine(Playground playground)
+        public GameEngine(int width, int height, UniverseConfiguration configuration)
         {
-            _playground = playground;
+            _width = width;
+            _height = height;
+            _configuration = configuration;
+
+            _playground = new Playground(_width, _height, _configuration);
         }
 
         public int CurrentGenerationNumber { get; private set; }
 
         public bool GameEnded { get; private set; }
+
+        public Bitmap Playground => _playground.Body;
 
         public void MoveToNextGeneration()
         {
@@ -56,6 +67,48 @@ namespace GameOfLife.Engine
         public void ChangeUniverseState(Cell cell)
         {
             _playground.Update(cell);
+        }
+
+        public GameSave SaveGame()
+        {
+            return new GameSave()
+            {
+                GenerationNumber = CurrentGenerationNumber,
+                GameEnded = GameEnded,
+                Playground = _playground.Body,
+                UniverseConfiguration = _playground.Configuration
+            };
+        }
+
+        public void LoadGame(GameSave save)
+        {
+            CurrentGenerationNumber = save.GenerationNumber;
+            GameEnded = save.GameEnded;
+            _playground.LoadGameFromBitmap(save.Playground);
+            _playground.Configuration = save.UniverseConfiguration;
+        }
+
+        public void RandomizeGame()
+        {
+            var randomCells = new Cell[_width, _height];
+
+            var random = new Random((int)DateTime.Now.Ticks);
+            for (int x = 0; x < randomCells.GetLength(0); x++)
+            {
+                for (int y = 0; y < randomCells.GetLength(1); y++)
+                {
+                    randomCells[x, y] = new Cell(x, y, random.Next(2) == 1);
+                }
+            }
+
+            _playground.LoadGameFromCells(randomCells);
+        }
+
+        public void ResetGame()
+        {
+            _playground = new Playground(_width, _height, _configuration);
+            GameEnded = false;
+            CurrentGenerationNumber = 0;
         }
 
         private int GetNumberOfAliveNeighbors(Cell cell)

@@ -1,4 +1,6 @@
-﻿namespace GameOfLife.Engine
+﻿using System.Drawing;
+
+namespace GameOfLife.Engine
 {
     public interface IGameEngine
     {
@@ -6,8 +8,18 @@
 
         bool GameEnded { get; }
 
+        Bitmap Playground { get; }
+
         void MoveToNextGeneration();
 
         void ChangeUniverseState(Cell cell);
+
+        GameSave SaveGame();
+
+        void LoadGame(GameSave save);
+
+        void RandomizeGame();
+
+        void ResetGame();
     }
 }

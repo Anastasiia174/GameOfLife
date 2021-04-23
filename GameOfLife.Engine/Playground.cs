@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace GameOfLife.Engine
 {
-    public class Playground
+    internal class Playground
     {
         private const int PixelsPerCell = 1;
 
@@ -64,7 +64,7 @@ namespace GameOfLife.Engine
                 y < 0 ? Height + y : y >= Height ? y % Height : y];
         }
 
-        private void LoadGameFromBitmap(Bitmap playgroundBitmap)
+        public void LoadGameFromBitmap(Bitmap playgroundBitmap)
         {
             // TODO 
         }
@@ -78,6 +78,7 @@ namespace GameOfLife.Engine
                 throw new ArgumentException($"Parameter {nameof(cells)} has invalid rank or length.");
             }
 
+            InitializeCells();
             CreatePlayground();
 
             for (int x = 0; x < cells.GetLength(0); x++)

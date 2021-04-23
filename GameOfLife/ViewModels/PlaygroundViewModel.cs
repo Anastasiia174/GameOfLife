@@ -21,15 +21,13 @@ namespace GameOfLife.ViewModels
     {
         private readonly DispatcherTimer _timer;
 
+        private readonly IGameEngine _gameEngine;
+
         private int _width;
 
         private int _height;
 
         private UniverseConfiguration _universeConfiguration;
-
-        private IGameEngine _gameEngine;
-
-        private Playground _playground;
 
         public PlaygroundViewModel(GameConfiguration configuration, MainViewModel mainViewModel) : base(mainViewModel)
         {
@@ -38,10 +36,9 @@ namespace GameOfLife.ViewModels
             _universeConfiguration = configuration.UniverseConfiguration;
             _isEditable = configuration.IsEditable;
 
-            _playground = new Playground(_width, _height, _universeConfiguration);
-            _gameEngine = new GameEngine(_playground);
-            
-            PlaygroundImageSource = _playground.Body;
+            _gameEngine = new GameEngine(_width, _height, _universeConfiguration);
+
+            PlaygroundImageSource = _gameEngine.Playground;
 
             _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
             _timer.Tick += UpdatePlayground;
@@ -205,33 +202,21 @@ namespace GameOfLife.ViewModels
 
         private void ResetGame()
         {
-            _playground = new Playground(_width, _height, _universeConfiguration);
-            _gameEngine = new GameEngine(_playground);
+            _gameEngine.ResetGame();
 
-            PlaygroundImageSource = _playground.Body;
+            PlaygroundImageSource = _gameEngine.Playground;
+            GenerationNumber = _gameEngine.CurrentGenerationNumber;
             GameEnded = _gameEngine.GameEnded;
             GameRunning = false;
             GameStarted = false;
-            GenerationNumber = _gameEngine.CurrentGenerationNumber;
         }
 
         private void RandomizeCells()
         {
-            var randomCells = new Cell[_width, _height];
+            ResetGame();
+            _gameEngine.RandomizeGame();
 
-            var random = new Random((int)DateTime.Now.Ticks);
-            for (int x = 0; x < randomCells.GetLength(0); x++)
-            {
-                for (int y = 0; y < randomCells.GetLength(1); y++)
-                {
-                    randomCells[x, y] = new Cell(x, y, random.Next(2) == 1);
-                }
-            }
-
-            _playground.LoadGameFromCells(randomCells);
-            _gameEngine = new GameEngine(_playground);
-
-            PlaygroundImageSource = _playground.Body;
+            PlaygroundImageSource = _gameEngine.Playground;
         }
 
         private void ChangeConfiguration(GameConfiguration configuration)
@@ -246,7 +231,7 @@ namespace GameOfLife.ViewModels
 
         private void SaveGame()
         {
-            
+
         }
     }
 }
