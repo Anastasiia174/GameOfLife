@@ -40,6 +40,7 @@ namespace GameOfLife.ViewModels
             set
             {
                 Set(() => SelectedSave, ref _selectedSave, value);
+                LoadCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -47,7 +48,7 @@ namespace GameOfLife.ViewModels
 
         public RelayCommand LoadCommand =>
             _loadCommand ??
-            (_loadCommand = new RelayCommand(LoadSave, () => Saves.Any()));
+            (_loadCommand = new RelayCommand(LoadSave, () => SelectedSave != null));
 
         private RelayCommand _loadRandomCommand;
 
@@ -64,7 +65,8 @@ namespace GameOfLife.ViewModels
         private void LoadSave()
         {
             var saveMessage = new LoadSaveMessage(SelectedSave);
-            Messenger.Default.Send<LoadSaveMessage>(saveMessage);
+
+            Messenger.Default.Send(saveMessage);
         }
 
         private void LoadRandom()
@@ -72,7 +74,8 @@ namespace GameOfLife.ViewModels
             var random = new Random((int)DateTime.Now.Ticks);
             var randomSave = Saves.ElementAt(random.Next(Saves.Count));
             var saveMessage = new LoadSaveMessage(randomSave);
-            Messenger.Default.Send<LoadSaveMessage>(saveMessage);
+
+            Messenger.Default.Send(saveMessage);
         }
 
         private void RemoveSave()

@@ -13,7 +13,7 @@ namespace GameOfLife.Data
 
         bool SaveAll();
 
-        Save GetSaveById(int id);
+        Save GetSaveByTitle(string title);
 
         void AddSave(Save newSave);
 

@@ -76,7 +76,8 @@ namespace GameOfLife.Engine
                 GenerationNumber = CurrentGenerationNumber,
                 GameEnded = GameEnded,
                 Playground = _playground.Body,
-                UniverseConfiguration = _playground.Configuration
+                UniverseConfiguration = _playground.Configuration,
+                DateTime = DateTime.Now
             };
         }
 

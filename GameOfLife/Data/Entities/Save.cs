@@ -17,5 +17,9 @@ namespace GameOfLife.Data.Entities
         public int SaveGeneration { get; set; }
 
         public byte[] SaveData { get; set; }
+
+        public bool SaveGameEnded { get; set; }
+
+        public bool SaveIsClosUniv { get; set; }
     }
 }

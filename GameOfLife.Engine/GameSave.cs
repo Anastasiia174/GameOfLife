@@ -16,5 +16,9 @@ namespace GameOfLife.Engine
         public bool GameEnded { get; set; }
 
         public UniverseConfiguration UniverseConfiguration { get; set; }
+
+        public DateTime DateTime { get; set; }
+
+        public string Title { get; set; }
     }
 }

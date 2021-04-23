@@ -30,11 +30,11 @@
             <Button Content="Remove" Width="100" Command="{Binding RemoveCommand}"></Button>
         </StackPanel>
 
-        <DataGrid  Grid.Column="3" Grid.Row="3" AutoGenerateColumns="False" ItemsSource="{Binding Saves}" SelectedItem="{Binding SelectedSave}">
+        <DataGrid Grid.Column="3" Grid.Row="3" AutoGenerateColumns="False" ItemsSource="{Binding Saves}" SelectedItem="{Binding SelectedSave}" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding SaveTitle}" Header="Title" Width="*"/>
-                <DataGridTextColumn Binding="{Binding SaveDtm}" Header="Date Time" Width="*"/>
-                <DataGridTextColumn Binding="{Binding SaveGeneration}" Header="Generations" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Title}" Header="Title" Width="*"/>
+                <DataGridTextColumn Binding="{Binding DateTime}" Header="Date Time" Width="*"/>
+                <DataGridTextColumn Binding="{Binding GenerationNumber}" Header="Generations" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

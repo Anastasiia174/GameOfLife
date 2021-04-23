@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GameOfLife.Data;
 using GameOfLife.Engine;
 using GameOfLife.Infrastructure;
+using GameOfLife.Services;
 using MahApps.Metro.IconPacks;
 
 namespace GameOfLife.ViewModels
@@ -23,13 +24,16 @@ namespace GameOfLife.ViewModels
             var defaultConfiguration = new GameConfiguration(20, 20, UniverseConfiguration.Limited, false);
 
             IGameRepository gameRepository = new GameRepository(new GameContext());
+            IGameSaveService saveService = new GameSaveService(gameRepository);
 
             var main = new MainViewModel();
-            var playground = new PlaygroundViewModel(defaultConfiguration, main);
+            var playground = new PlaygroundViewModel(defaultConfiguration, saveService, main);
             var settings = new SettingsViewModel(defaultConfiguration, main);
-            var saves = new SavesViewModel(gameRepository, main);
+            var saves = new SavesViewModel(saveService, main);
             var logs = new LogsViewModel(main);
 
+            SimpleIoc.Default.Register<IGameRepository>(() => gameRepository);
+            SimpleIoc.Default.Register<IGameSaveService>(() => saveService);
             SimpleIoc.Default.Register<MainViewModel>(() => main);
             SimpleIoc.Default.Register<PlaygroundViewModel>(() => playground);
             SimpleIoc.Default.Register<SettingsViewModel>(() => settings);

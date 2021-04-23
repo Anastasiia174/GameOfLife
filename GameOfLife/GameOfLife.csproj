@@ -194,7 +194,7 @@
     <Compile Include="Data\GameContext.cs" />
     <Compile Include="Data\GameRepository.cs" />
     <Compile Include="Data\IGameRepository.cs" />
-    <Compile Include="Extensions\ImageExtension.cs" />
+    <Compile Include="Extensions\ImageConverter.cs" />
     <Compile Include="Infrastructure\ConfigMessage.cs" />
     <Compile Include="Infrastructure\GameConfiguration.cs" />
     <Compile Include="Infrastructure\LoadSaveMessage.cs" />

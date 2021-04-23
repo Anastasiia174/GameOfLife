@@ -241,6 +241,7 @@ namespace GameOfLife.ViewModels
         private void SaveGame()
         {
             var gameSave = _gameEngine.SaveGame();
+            gameSave.Title = "test";
             _gameSaveService.SaveGameSave(gameSave);
         }
 

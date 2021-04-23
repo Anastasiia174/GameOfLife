@@ -29,11 +29,6 @@ namespace GameOfLife.Data
             return _context.SaveChanges() > 0;
         }
 
-        public Save GetSaveById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public void AddSave(Save newSave)
         {
             _context.Saves.Add(newSave);
@@ -42,6 +37,11 @@ namespace GameOfLife.Data
         public void RemoveSave(Save saveToRemove)
         {
             _context.Saves.Remove(saveToRemove);
+        }
+
+        public Save GetSaveByTitle(string title)
+        {
+            return _context.Saves.FirstOrDefault(s => s.SaveTitle == title);
         }
     }
 }
