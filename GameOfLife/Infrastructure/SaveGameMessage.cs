@@ -11,7 +11,7 @@ namespace GameOfLife.Infrastructure
     {
         public string GameTitle { get; set; }
 
-        public Action<GameSave> SaveAction { get; set; }
+        public Func<GameSave, Task> SaveAction { get; set; }
 
         public Action<string> ErrorAction { get; set; }
     }

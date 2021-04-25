@@ -15,18 +15,26 @@ namespace GameOfLife.Data
         public GameRepository(GameContext context)
         {
             _context = context;
-
-            _context.Saves.Load();
         }
 
-        public IEnumerable<Save> GetAllSaves()
+        public async Task<IEnumerable<Save>> GetAllSavesAsync()
         {
-            return _context.Saves.ToList();
+            IQueryable<Save> query = _context.Saves;
+
+            return await query.ToListAsync();
         }
 
-        public bool SaveAll()
+        public async Task<bool> SaveAllAsync()
         {
-            return _context.SaveChanges() > 0;
+            return (await _context.SaveChangesAsync()) > 0;
+        }
+
+        public async Task<Save> GetSaveByTitleAsync(string title)
+        {
+            IQueryable<Save> query = _context.Saves;
+            query = query.Where(s => s.SaveTitle == title);
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public void AddSave(Save newSave)
@@ -37,11 +45,6 @@ namespace GameOfLife.Data
         public void RemoveSave(Save saveToRemove)
         {
             _context.Saves.Remove(saveToRemove);
-        }
-
-        public Save GetSaveByTitle(string title)
-        {
-            return _context.Saves.FirstOrDefault(s => s.SaveTitle == title);
         }
     }
 }

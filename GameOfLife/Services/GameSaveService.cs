@@ -20,9 +20,11 @@ namespace GameOfLife.Services
             _gameRepository = gameRepository;
         }
 
-        public IEnumerable<GameSave> GetAllGameSaves()
+        public async Task<IEnumerable<GameSave>> GetAllGameSavesAsync()
         {
-            return _gameRepository.GetAllSaves().Select(s => new GameSave()
+            var gameSaves = await _gameRepository.GetAllSavesAsync();
+
+            return gameSaves.Select(s => new GameSave()
             {
                 Title = s.SaveTitle,
                 DateTime = s.SaveDtm,
@@ -34,7 +36,7 @@ namespace GameOfLife.Services
             }).ToList();
         }
 
-        public void SaveGameSave(GameSave save)
+        public async Task<bool> SaveGameSaveAsync(GameSave save)
         {
             _gameRepository.AddSave(new Save()
             {
@@ -46,18 +48,20 @@ namespace GameOfLife.Services
                 SaveData = ImageConverter.ImageToByteArray(save.Playground, ImageFormat.Bmp)
             });
 
-            _gameRepository.SaveAll();
+           return await _gameRepository.SaveAllAsync();
         }
 
-        public void RemoveGameSave(GameSave save)
+        public async Task<bool> RemoveGameSaveAsync(GameSave save)
         {
-            var repoSave = _gameRepository.GetSaveByTitle(save.Title);
+            var repoSave = await _gameRepository.GetSaveByTitleAsync(save.Title);
 
             if (repoSave != null)
             {
                 _gameRepository.RemoveSave(repoSave);
-                _gameRepository.SaveAll();
+                return await _gameRepository.SaveAllAsync();
             }
+
+            return false;
         }
     }
 }

@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GameOfLife.Engine;
+using GameOfLife.Helpers.Async;
 using GameOfLife.Infrastructure;
 using GameOfLife.Services;
 
@@ -18,17 +20,30 @@ namespace GameOfLife.ViewModels
 
         private readonly IDialogService _dialogService;
 
+        private bool _isLoaded;
+
         public SavesViewModel(IGameSaveService gameSaveService, IDialogService dialogService, MainViewModel mainViewModel) : base(mainViewModel)
         {
             _gameSaveService = gameSaveService;
             _dialogService = dialogService;
         }
 
+        private bool _isBusy;
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                Set(() => IsBusy, ref _isBusy, value);
+            }
+        }
+
         private ObservableCollection<GameSave> _saves;
 
         public ObservableCollection<GameSave> Saves
         {
-            get => _saves ?? (_saves = new ObservableCollection<GameSave>(_gameSaveService.GetAllGameSaves()));
+            get => _saves ?? (_saves = new ObservableCollection<GameSave>());
             set
             {
                 Set(() => Saves, ref _saves, value);
@@ -59,6 +74,12 @@ namespace GameOfLife.ViewModels
             }
         }
 
+        private ICommand _loadSavesCommand;
+
+        public ICommand LoadSavesCommand =>
+            _loadSavesCommand
+            ?? (_loadSavesCommand = new AwaitableDelegateCommand(LoadSavesAsync));
+
         private RelayCommand _saveCommand;
 
         public RelayCommand SaveCommand =>
@@ -77,11 +98,11 @@ namespace GameOfLife.ViewModels
             _loadRandomCommand ??
             (_loadRandomCommand = new RelayCommand(LoadRandom, () => Saves.Any()));
 
-        private RelayCommand _removeCommand;
+        private ICommand _removeCommand;
 
-        public RelayCommand RemoveCommand =>
+        public ICommand RemoveCommand =>
             _removeCommand ??
-            (_removeCommand = new RelayCommand(RemoveSave));
+            (_removeCommand = new AwaitableDelegateCommand(RemoveSaveAsync, () => SelectedSave != null));
 
         private void SaveGame()
         {
@@ -123,16 +144,35 @@ namespace GameOfLife.ViewModels
             Messenger.Default.Send(configMessage, "Settings");
         }
 
-        private void RemoveSave()
+        private async Task RemoveSaveAsync()
         {
-            _gameSaveService.RemoveGameSave(SelectedSave);
+            IsBusy = true;
+            await _gameSaveService.RemoveGameSaveAsync(SelectedSave);
+            IsBusy = false;
+
             Saves.Remove(SelectedSave);
         }
 
-        private void SaveGame(GameSave save)
+        private async Task SaveGame(GameSave save)
         {
-            _gameSaveService.SaveGameSave(save);
+            IsBusy = true;
+            await _gameSaveService.SaveGameSaveAsync(save);
+            IsBusy = false;
+
             Saves.Add(save);
+        }
+
+        private async Task LoadSavesAsync()
+        {
+            if (!_isLoaded)
+            {
+                IsBusy = true;
+                var saves = await _gameSaveService.GetAllGameSavesAsync();
+                IsBusy = false;
+
+                Saves = new ObservableCollection<GameSave>(saves);
+                _isLoaded = true;
+            }
         }
     }
 }

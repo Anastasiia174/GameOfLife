@@ -159,7 +159,13 @@
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
+    <Reference Include="Nito.Disposables, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nito.Disposables.2.2.0\lib\net461\Nito.Disposables.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -195,6 +201,10 @@
     <Compile Include="Data\GameRepository.cs" />
     <Compile Include="Data\IGameRepository.cs" />
     <Compile Include="Extensions\ImageConverter.cs" />
+    <Compile Include="Helpers\Async\AwaitableDelegateCommand.cs" />
+    <Compile Include="Helpers\Async\DelegateCommand.cs" />
+    <Compile Include="Helpers\Async\IAsyncCommand.cs" />
+    <Compile Include="Helpers\Async\IRaiseCanExecuteChanged.cs" />
     <Compile Include="Infrastructure\ConfigMessage.cs" />
     <Compile Include="Infrastructure\GameConfiguration.cs" />
     <Compile Include="Infrastructure\LoadSaveMessage.cs" />

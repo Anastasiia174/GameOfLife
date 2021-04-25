@@ -9,10 +9,10 @@ namespace GameOfLife.Services
 {
     public interface IGameSaveService
     {
-        IEnumerable<GameSave> GetAllGameSaves();
+        Task<IEnumerable<GameSave>> GetAllGameSavesAsync();
 
-        void SaveGameSave(GameSave save);
+        Task<bool> SaveGameSaveAsync(GameSave save);
 
-        void RemoveGameSave(GameSave save);
+        Task<bool> RemoveGameSaveAsync(GameSave save);
     }
 }

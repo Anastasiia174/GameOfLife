@@ -9,11 +9,11 @@ namespace GameOfLife.Data
 {
     public interface IGameRepository
     {
-        IEnumerable<Save> GetAllSaves();
+        Task<IEnumerable<Save>> GetAllSavesAsync();
 
-        bool SaveAll();
+        Task<bool> SaveAllAsync();
 
-        Save GetSaveByTitle(string title);
+        Task<Save> GetSaveByTitleAsync(string title);
 
         void AddSave(Save newSave);
 
