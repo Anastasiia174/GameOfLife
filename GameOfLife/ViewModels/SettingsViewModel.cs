@@ -15,6 +15,11 @@ namespace GameOfLife.ViewModels
             UniverseConfiguration = configuration.UniverseConfiguration;
 
             IsChanged = false;
+
+            Messenger.Default.Register<ConfigMessage>(
+                this, 
+                "Settings",
+                message => UpdateConfiguration(message.Configuration));
         }
 
         private int _width;
@@ -91,10 +96,18 @@ namespace GameOfLife.ViewModels
             var newConfiguration = new GameConfiguration(Width, Height, UniverseConfiguration, IsEditable);
             var message = new ConfigMessage(newConfiguration);
 
-            Messenger.Default.Send(message);
+            Messenger.Default.Send(message, "Playground");
 
             IsChanged = false;
             ApplyCommand.RaiseCanExecuteChanged();
+        }
+
+        private void UpdateConfiguration(GameConfiguration configuration)
+        {
+            Width = configuration.Width;
+            Height = configuration.Height;
+            IsEditable = configuration.IsEditable;
+            UniverseConfiguration = configuration.UniverseConfiguration;
         }
     }
 }

@@ -65,8 +65,11 @@ namespace GameOfLife.ViewModels
         private void LoadSave()
         {
             var saveMessage = new LoadSaveMessage(SelectedSave);
+            var configMessage = new ConfigMessage(new GameConfiguration(SelectedSave.Playground.Width,
+                SelectedSave.Playground.Height, SelectedSave.UniverseConfiguration));
 
             Messenger.Default.Send(saveMessage);
+            Messenger.Default.Send(configMessage, "Settings");
         }
 
         private void LoadRandom()
@@ -74,8 +77,11 @@ namespace GameOfLife.ViewModels
             var random = new Random((int)DateTime.Now.Ticks);
             var randomSave = Saves.ElementAt(random.Next(Saves.Count));
             var saveMessage = new LoadSaveMessage(randomSave);
+            var configMessage = new ConfigMessage(new GameConfiguration(randomSave.Playground.Width,
+                randomSave.Playground.Height, randomSave.UniverseConfiguration));
 
             Messenger.Default.Send(saveMessage);
+            Messenger.Default.Send(configMessage, "Settings");
         }
 
         private void RemoveSave()

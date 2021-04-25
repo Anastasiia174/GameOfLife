@@ -7,9 +7,12 @@ namespace GameOfLife.Engine
 {
     public class GameEngine : IGameEngine
     {
-        private readonly int _width;
-        private readonly int _height;
-        private readonly UniverseConfiguration _configuration;
+        private  UniverseConfiguration _configuration;
+
+        private int _width;
+
+        private int _height;
+
         private Playground _playground;
 
         public GameEngine(int width, int height, UniverseConfiguration configuration)
@@ -105,9 +108,12 @@ namespace GameOfLife.Engine
             _playground.LoadGameFromCells(randomCells);
         }
 
-        public void ResetGame()
+        public void ResetGame(int width, int height, UniverseConfiguration configuration)
         {
-            _playground = new Playground(_width, _height, _configuration);
+            _width = width;
+            _height = height;
+            _configuration = configuration;
+            _playground = new Playground(width, height, configuration);
             GameEnded = false;
             CurrentGenerationNumber = 0;
         }

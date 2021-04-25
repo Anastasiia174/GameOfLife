@@ -43,12 +43,14 @@ namespace GameOfLife.ViewModels
             _gameEngine = new GameEngine(_width, _height, _universeConfiguration);
 
             PlaygroundImageSource = _gameEngine.Playground;
+            Title = "New game*";
 
             _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
             _timer.Tick += UpdatePlayground;
 
             Messenger.Default.Register<ConfigMessage>(
                 this, 
+                "Playground",
                 message => ChangeConfiguration(message.Configuration));
 
             Messenger.Default.Register<LoadSaveMessage>(
@@ -76,6 +78,17 @@ namespace GameOfLife.ViewModels
             set
             {
                 Set(() => GenerationNumber, ref _generationNumber, value);
+            }
+        }
+
+        private string _title;
+
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                Set(() => Title, ref _title, value);
             }
         }
 
@@ -211,7 +224,7 @@ namespace GameOfLife.ViewModels
 
         private void ResetGame()
         {
-            _gameEngine.ResetGame();
+            _gameEngine.ResetGame(_width, _height, _universeConfiguration);
 
             PlaygroundImageSource = _gameEngine.Playground;
             GenerationNumber = _gameEngine.CurrentGenerationNumber;
@@ -248,9 +261,13 @@ namespace GameOfLife.ViewModels
         private void LoadGameSave(GameSave save)
         {
             _gameEngine.LoadGame(save);
+
+            _width = save.Playground.Width;
+            _height = save.Playground.Height;
             GenerationNumber = _gameEngine.CurrentGenerationNumber;
             GameEnded = _gameEngine.GameEnded;
             PlaygroundImageSource = _gameEngine.Playground;
+            Title = save.Title;
         }
     }
 }

@@ -20,6 +20,6 @@ namespace GameOfLife.Engine
 
         void RandomizeGame();
 
-        void ResetGame();
+        void ResetGame(int width, int height, UniverseConfiguration configuration);
     }
 }
