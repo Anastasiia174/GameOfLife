@@ -27,6 +27,7 @@
         <StackPanel Grid.Column="1" Grid.Row="1" DockPanel.Dock="Top" Orientation="Horizontal">
             <Label Margin="0 0 10 0" VerticalAlignment="Center">Generation:</Label>
             <TextBlock Text="{Binding GenerationNumber}" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Title}" Margin="300 0 0 0" VerticalAlignment="Center"/>
         </StackPanel>
         <Grid Grid.Column="1" Grid.Row="2" Name="PlaygroundGrid" Height="Auto">
             <ScrollViewer HorizontalScrollBarVisibility="Auto">
@@ -39,36 +40,19 @@
                 </Image>
             </ScrollViewer>
         </Grid>
-        <Grid Grid.Column="1" Grid.Row="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="100"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="25"/>
-                <RowDefinition />
-            </Grid.RowDefinitions>
+        <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="Start" Grid.Column="1" Grid.Row="1" 
+                    Style="{StaticResource ButtonPlaygroundStyle}"
                     Command="{Binding StartCommand}"/>
             <Button Content="Pause" Grid.Column="3" Grid.Row="1" 
+                    Style="{StaticResource ButtonPlaygroundStyle}"
                     Command="{Binding PauseCommand}"/>
             <Button Content="Reset" Grid.Column="5" Grid.Row="1" 
+                    Style="{StaticResource ButtonPlaygroundStyle}"
                     Command="{Binding ResetCommand}"/>
-            <Button Content="Save" Grid.Column="7" Grid.Row="1" 
-                    Command="{Binding SaveCommand}"/>
-            <Button Content="Random" Grid.Column="9" Grid.Row="1" 
+            <Button Content="Random" Grid.Column="7" Grid.Row="1" 
+                    Style="{StaticResource ButtonPlaygroundStyle}"
                     Command="{Binding RandomizeCellsCommand}"/>
-        </Grid>
+        </StackPanel>
     </Grid>
 </UserControl>

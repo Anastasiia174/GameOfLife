@@ -16,9 +16,12 @@ namespace GameOfLife.ViewModels
     {
         private readonly IGameSaveService _gameSaveService;
 
-        public SavesViewModel(IGameSaveService gameSaveService, MainViewModel mainViewModel) : base(mainViewModel)
+        private readonly IDialogService _dialogService;
+
+        public SavesViewModel(IGameSaveService gameSaveService, IDialogService dialogService, MainViewModel mainViewModel) : base(mainViewModel)
         {
             _gameSaveService = gameSaveService;
+            _dialogService = dialogService;
         }
 
         private ObservableCollection<GameSave> _saves;
@@ -44,6 +47,24 @@ namespace GameOfLife.ViewModels
             }
         }
 
+        private string _gameTitle;
+
+        public string GameTitle
+        {
+            get => _gameTitle;
+            set
+            {
+                Set(() => GameTitle, ref _gameTitle, value);
+                SaveCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private RelayCommand _saveCommand;
+
+        public RelayCommand SaveCommand =>
+            _saveCommand ??
+            (_saveCommand = new RelayCommand(SaveGame, () => !string.IsNullOrEmpty(GameTitle)));
+
         private RelayCommand _loadCommand;
 
         public RelayCommand LoadCommand =>
@@ -61,6 +82,24 @@ namespace GameOfLife.ViewModels
         public RelayCommand RemoveCommand =>
             _removeCommand ??
             (_removeCommand = new RelayCommand(RemoveSave));
+
+        private void SaveGame()
+        {
+            if (_saves.Any(s => s.Title == GameTitle))
+            {
+                _dialogService.ShowMessage($"The game with title \"{GameTitle}\" already exists");
+                return;
+            }
+
+            var saveGameMessage = new SaveGameMessage()
+            {
+                GameTitle = GameTitle,
+                SaveAction = SaveGame,
+                ErrorAction = error => _dialogService.ShowMessage(error)
+            };
+
+            Messenger.Default.Send(saveGameMessage);
+        }
 
         private void LoadSave()
         {
@@ -88,6 +127,12 @@ namespace GameOfLife.ViewModels
         {
             _gameSaveService.RemoveGameSave(SelectedSave);
             Saves.Remove(SelectedSave);
+        }
+
+        private void SaveGame(GameSave save)
+        {
+            _gameSaveService.SaveGameSave(save);
+            Saves.Add(save);
         }
     }
 }

@@ -30,6 +30,8 @@ namespace GameOfLife.ViewModels
 
         private int _height;
 
+        private bool _isSaved;
+
         private UniverseConfiguration _universeConfiguration;
 
         public PlaygroundViewModel(GameConfiguration configuration, IGameSaveService gameSaveService, MainViewModel mainViewModel) : base(mainViewModel)
@@ -57,6 +59,26 @@ namespace GameOfLife.ViewModels
                 this,
                 message =>
                 LoadGameSave(message.GameToSave));
+
+            Messenger.Default.Register<SaveGameMessage>(
+                this,
+                message =>
+                {
+                    if (GameRunning)
+                    {
+                        message.ErrorAction("The game is running. Pause game before saving.");
+                        return;
+                    }
+
+                    if (!_isSaved)
+                    {
+                        message.SaveAction(SaveGame(message.GameTitle));
+                    }
+                    else
+                    {
+                        message.ErrorAction("The game has been already saved.");
+                    }
+                });
         }
 
         private Bitmap _playgroundImageSource;
@@ -155,13 +177,6 @@ namespace GameOfLife.ViewModels
             _resetCommand ??
             (_resetCommand = new RelayCommand(ResetGame, () => !GameRunning));
 
-        private RelayCommand _saveCommand;
-
-        public RelayCommand SaveCommand =>
-            _saveCommand ??
-            (_saveCommand = new RelayCommand(SaveGame, () => !GameRunning && GameStarted));
-        
-
         private RelayCommand _randomizeCellsCommand;
 
         public RelayCommand RandomizeCellsCommand =>
@@ -181,6 +196,7 @@ namespace GameOfLife.ViewModels
             _timer.Start();
             GameRunning = true;
             GameStarted = true;
+            _isSaved = false;
         }
 
         private async void UpdatePlayground(object sender, object e)
@@ -220,6 +236,7 @@ namespace GameOfLife.ViewModels
             _gameEngine.ChangeUniverseState(new Cell(cellX, cellY));
 
             RaisePropertyChanged(() => PlaygroundImageSource);
+            _isSaved = false;
         }
 
         private void ResetGame()
@@ -231,6 +248,7 @@ namespace GameOfLife.ViewModels
             GameEnded = _gameEngine.GameEnded;
             GameRunning = false;
             GameStarted = false;
+            _isSaved = false;
         }
 
         private void RandomizeCells()
@@ -251,11 +269,14 @@ namespace GameOfLife.ViewModels
             ResetGame();
         }
 
-        private void SaveGame()
+        private GameSave SaveGame(string title)
         {
+            Title = title;
             var gameSave = _gameEngine.SaveGame();
-            gameSave.Title = "test";
-            _gameSaveService.SaveGameSave(gameSave);
+            gameSave.Title = Title;
+            _isSaved = true;
+
+            return gameSave;
         }
 
         private void LoadGameSave(GameSave save)

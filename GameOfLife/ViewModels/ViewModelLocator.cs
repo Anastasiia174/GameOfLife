@@ -25,11 +25,12 @@ namespace GameOfLife.ViewModels
 
             IGameRepository gameRepository = new GameRepository(new GameContext());
             IGameSaveService saveService = new GameSaveService(gameRepository);
+            IDialogService dialogService = new DialogService();
 
             var main = new MainViewModel();
             var playground = new PlaygroundViewModel(defaultConfiguration, saveService, main);
             var settings = new SettingsViewModel(defaultConfiguration, main);
-            var saves = new SavesViewModel(saveService, main);
+            var saves = new SavesViewModel(saveService, dialogService, main);
             var logs = new LogsViewModel(main);
 
             SimpleIoc.Default.Register<IGameRepository>(() => gameRepository);
