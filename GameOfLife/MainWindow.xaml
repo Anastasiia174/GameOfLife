@@ -31,6 +31,9 @@
             <DataTemplate DataType="{x:Type viewModels:LogsViewModel}">
                 <views:LogsView DataContext="{Binding Logs, Source={StaticResource Locator}}" />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModels:LayoutsViewModel}">
+                <views:LayoutsView DataContext="{Binding Layouts, Source={StaticResource Locator}}" />
+            </DataTemplate>
 
         </Grid.Resources>
 

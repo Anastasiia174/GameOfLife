@@ -20,7 +20,7 @@ namespace GameOfLife.Services
             _gameRepository = gameRepository;
         }
 
-        public async Task<IEnumerable<GameSave>> GetAllGameSavesAsync()
+        public async Task<IEnumerable<GameSave>> GetAllGameSavesAsync(bool includePlayground = false)
         {
             var gameSaves = await _gameRepository.GetAllSavesAsync();
 
@@ -30,10 +30,30 @@ namespace GameOfLife.Services
                 DateTime = s.SaveDtm,
                 GameEnded = s.SaveGameEnded,
                 GenerationNumber = s.SaveGeneration,
-                Playground = ImageConverter.ByteArrayToBitmap(s.SaveData),
+                Playground = includePlayground ? ImageConverter.ByteArrayToBitmap(s.SaveData) : null,
                 UniverseConfiguration =
                     s.SaveIsClosUniv ? UniverseConfiguration.Closed : UniverseConfiguration.Limited
             }).ToList();
+        }
+
+        public async Task<GameSave> GetGameSaveByTitleAsync(string title)
+        {
+            var repoSave = await _gameRepository.GetSaveByTitleAsync(title);
+
+            if (repoSave != null)
+            {
+                return new GameSave()
+                {
+                    Title = repoSave.SaveTitle,
+                    DateTime = repoSave.SaveDtm,
+                    GameEnded = repoSave.SaveGameEnded,
+                    GenerationNumber = repoSave.SaveGeneration,
+                    Playground = ImageConverter.ByteArrayToBitmap(repoSave.SaveData),
+                    UniverseConfiguration = repoSave.SaveIsClosUniv ? UniverseConfiguration.Closed : UniverseConfiguration.Limited
+                };
+            }
+
+            return null;
         }
 
         public async Task<bool> SaveGameSaveAsync(GameSave save)

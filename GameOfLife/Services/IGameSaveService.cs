@@ -9,7 +9,9 @@ namespace GameOfLife.Services
 {
     public interface IGameSaveService
     {
-        Task<IEnumerable<GameSave>> GetAllGameSavesAsync();
+        Task<IEnumerable<GameSave>> GetAllGameSavesAsync(bool includePlayground = false);
+
+        Task<GameSave> GetGameSaveByTitleAsync(string title);
 
         Task<bool> SaveGameSaveAsync(GameSave save);
 

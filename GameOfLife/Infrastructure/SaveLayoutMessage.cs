@@ -7,13 +7,10 @@ using GameOfLife.Engine;
 
 namespace GameOfLife.Infrastructure
 {
-    public class LoadSaveMessage
+    public class SaveLayoutMessage
     {
-        public LoadSaveMessage(GameSave gameToLoad)
-        {
-            GameToLoad = gameToLoad;
-        }
+        public Action<GameLayout> SaveAction { get; set; }
 
-        public GameSave GameToLoad { get; set; }
+        public Action<string> ErrorAction { get; set; }
     }
 }

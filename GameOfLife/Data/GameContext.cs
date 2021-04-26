@@ -21,12 +21,22 @@ namespace GameOfLife.Data
 
         public DbSet<Log> Logs { get; set; }
 
+        public DbSet<Layout> Layouts { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Save>()
                 .Property(p => p.SaveId)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<Log>()
+                .Property(p => p.LogId)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<Layout>()
+                .Property(p => p.LayoutId)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
         }
     }

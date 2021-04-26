@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="GameOfLife.Views.LayoutsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GameOfLife.Views"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition />
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="Game layouts" Style="{StaticResource HeaderTextBlockStyle}"></TextBlock>
+
+        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding LayoutTitle, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter game title here" x:Name="TextBox"></TextBox>
+
+        <StackPanel Grid.Column="3" Grid.Row="3" Grid.RowSpan="3" Orientation="Vertical">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding LoadLayoutsCommand}"></i:InvokeCommandAction>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>   
+            <Button Content="Save" Margin="0 0 0 10" Width="100" Command="{Binding SaveCommand}" x:Name="ButtonSave"></Button>
+            <Button Content="Load" Margin="0 0 0 10" Width="100" Command="{Binding LoadCommand}"></Button>
+            <Button Content="Load random" Margin="0 0 0 10" Width="100" Command="{Binding LoadRandomCommand}"></Button>
+            <Button Content="Delete" Width="100" Command="{Binding DeleteCommand}"></Button>
+        </StackPanel>
+
+        <DataGrid Grid.Column="1" Grid.Row="5" AutoGenerateColumns="False" ItemsSource="{Binding Layouts}" SelectedItem="{Binding SelectedLayout}" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Title}" Header="Title" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <mah:ProgressRing Grid.Column="1" Grid.Row="5" Foreground="BlueViolet"
+                          IsActive="{Binding IsBusy}" />
+    </Grid>
+</UserControl>

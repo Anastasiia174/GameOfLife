@@ -190,30 +190,42 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\Entities\Layout.cs" />
     <Compile Include="Data\Entities\Log.cs" />
     <Compile Include="Data\Entities\Save.cs" />
     <Compile Include="Data\GameContext.cs" />
+    <Compile Include="Data\GameLayoutsRepository.cs" />
     <Compile Include="Data\GameLogsRepository.cs" />
     <Compile Include="Data\GameSavesRepository.cs" />
     <Compile Include="Data\IGameLogsRepository.cs" />
+    <Compile Include="Data\IGameLayoutsRepository.cs" />
     <Compile Include="Data\IGameSavesRepository.cs" />
     <Compile Include="Extensions\ImageConverter.cs" />
     <Compile Include="Infrastructure\ConfigMessage.cs" />
     <Compile Include="Infrastructure\GameConfiguration.cs" />
+    <Compile Include="Infrastructure\GameLayout.cs" />
     <Compile Include="Infrastructure\GameLog.cs" />
+    <Compile Include="Infrastructure\LoadLayoutMessage.cs" />
     <Compile Include="Infrastructure\LoadSaveMessage.cs" />
+    <Compile Include="Infrastructure\SaveLayoutMessage.cs" />
     <Compile Include="Infrastructure\SaveGameMessage.cs" />
     <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Services\GameLayoutService.cs" />
     <Compile Include="Services\GameLogService.cs" />
     <Compile Include="Services\GameSaveService.cs" />
     <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\IGameLayoutService.cs" />
     <Compile Include="Services\IGameLogService.cs" />
     <Compile Include="Services\IGameSaveService.cs" />
     <Compile Include="ViewModels\LogsViewModel.cs" />
+    <Compile Include="ViewModels\LayoutsViewModel.cs" />
     <Compile Include="ViewModels\SavesViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\LogsView.xaml.cs">
       <DependentUpon>LogsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LayoutsView.xaml.cs">
+      <DependentUpon>LayoutsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SavesView.xaml.cs">
       <DependentUpon>SavesView.xaml</DependentUpon>
@@ -257,6 +269,10 @@
       <DependentUpon>Playground.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\LayoutsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\SavesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

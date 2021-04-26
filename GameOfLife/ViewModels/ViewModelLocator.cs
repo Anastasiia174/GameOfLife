@@ -28,6 +28,8 @@ namespace GameOfLife.ViewModels
             IGameSaveService saveService = new GameSaveService(gameRepository);
             IGameLogsRepository gameLogsRepository = new GameLogsRepository(context);
             IGameLogService gameLogService = new GameLogService(gameLogsRepository);
+            IGameLayoutsRepository gameLayoutsRepository = new GameLayoutsRepository(context);
+            IGameLayoutService layoutService = new GameLayoutService(gameLayoutsRepository);
             IDialogService dialogService = new DialogService();
 
             var main = new MainViewModel();
@@ -35,6 +37,7 @@ namespace GameOfLife.ViewModels
             var settings = new SettingsViewModel(defaultConfiguration, main);
             var saves = new SavesViewModel(saveService, dialogService, main);
             var logs = new LogsViewModel(gameLogService, main);
+            var layouts = new LayoutsViewModel(layoutService, dialogService, main);
 
             SimpleIoc.Default.Register<IGameSavesRepository>(() => gameRepository);
             SimpleIoc.Default.Register<IGameSaveService>(() => saveService);
@@ -47,11 +50,13 @@ namespace GameOfLife.ViewModels
             SimpleIoc.Default.Register<SettingsViewModel>(() => settings);
             SimpleIoc.Default.Register<SavesViewModel>(() => saves);
             SimpleIoc.Default.Register<LogsViewModel>(() => logs);
+            SimpleIoc.Default.Register<LayoutsViewModel>(() => layouts);
 
             main.CreateMenuItems(
                 new List<MenuItemViewModel>()
                 {
                     playground.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.GoogleController }, "Play game"), 
+                    layouts.SetStyle(new PackIconMaterial() {Kind = PackIconMaterialKind.DotsHexagon}, "Layouts"),
                     saves.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.ContentSaveAll }, "Saved games"), 
                     logs.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.Server }, "Game logs")
                 },
@@ -70,5 +75,7 @@ namespace GameOfLife.ViewModels
         public LogsViewModel Logs => ServiceLocator.Current.GetInstance<LogsViewModel>();
 
         public SettingsViewModel Settings => ServiceLocator.Current.GetInstance<SettingsViewModel>();
+
+        public LayoutsViewModel Layouts => ServiceLocator.Current.GetInstance<LayoutsViewModel>();
     }
 }

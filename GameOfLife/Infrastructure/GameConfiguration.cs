@@ -9,7 +9,7 @@ namespace GameOfLife.Infrastructure
 {
     public class GameConfiguration
     {
-        public GameConfiguration(int width, int height, UniverseConfiguration universeConfiguration, bool isEditable = false)
+        public GameConfiguration(int width, int height, UniverseConfiguration universeConfiguration = UniverseConfiguration.Limited, bool isEditable = false)
         {
             Width = width;
             Height = height;
