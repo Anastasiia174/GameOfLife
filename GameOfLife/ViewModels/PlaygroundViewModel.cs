@@ -20,6 +20,8 @@ namespace GameOfLife.ViewModels
 {
     public class PlaygroundViewModel : MenuItemViewModel
     {
+        private readonly IGameLogger _gameLogger;
+
         private readonly DispatcherTimer _timer;
 
         private readonly IGameEngine _gameEngine;
@@ -32,8 +34,9 @@ namespace GameOfLife.ViewModels
 
         private UniverseConfiguration _universeConfiguration;
 
-        public PlaygroundViewModel(GameConfiguration configuration, MainViewModel mainViewModel) : base(mainViewModel)
+        public PlaygroundViewModel(GameConfiguration configuration, IGameLogger gameLogger, MainViewModel mainViewModel) : base(mainViewModel)
         {
+            _gameLogger = gameLogger;
             _width = configuration.Width;
             _height = configuration.Height;
             _universeConfiguration = configuration.UniverseConfiguration;
@@ -81,7 +84,7 @@ namespace GameOfLife.ViewModels
                 this,
                 message =>
                 {
-                    if (GameStarted)
+                    if (GenerationNumber > 0)
                     {
                         message.ErrorAction("Layout could be save only before game has been started.");
                         return;
@@ -208,6 +211,11 @@ namespace GameOfLife.ViewModels
 
         private void StartGame()
         {
+            if (GenerationNumber == 0)
+            {
+                _gameLogger.LogInfo("New game has been started", PlaygroundImageSource);
+            }
+
             _timer.Start();
             GameRunning = true;
             GameStarted = true;
@@ -231,6 +239,8 @@ namespace GameOfLife.ViewModels
             {
                 _timer.Stop();
                 GameRunning = false;
+
+                _gameLogger.LogInfo($"Game {Title} has been ended", PlaygroundImageSource);
             }
         }
 
@@ -264,6 +274,8 @@ namespace GameOfLife.ViewModels
             GameRunning = false;
             GameStarted = false;
             _isSaved = false;
+
+            _gameLogger.LogInfo($"Game {Title} has been reset");
         }
 
         private void RandomizeCells()
@@ -291,6 +303,8 @@ namespace GameOfLife.ViewModels
             gameSave.Title = Title;
             _isSaved = true;
 
+            _gameLogger.LogInfo($"Game {Title} has been saved");
+
             return gameSave;
         }
 
@@ -304,6 +318,8 @@ namespace GameOfLife.ViewModels
             GameEnded = _gameEngine.GameEnded;
             PlaygroundImageSource = _gameEngine.Playground;
             Title = save.Title;
+
+            _gameLogger.LogInfo($"Game {Title} has been loaded");
         }
         
         private void LoadLayout(GameLayout layout)
@@ -322,6 +338,8 @@ namespace GameOfLife.ViewModels
             GameEnded = _gameEngine.GameEnded;
             PlaygroundImageSource = _gameEngine.Playground;
             Title = "New game*";
+
+            _gameLogger.LogInfo($"Layout {layout.Title} has been loaded");
         }
     }
 }

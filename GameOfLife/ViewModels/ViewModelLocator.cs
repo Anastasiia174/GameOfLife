@@ -31,9 +31,10 @@ namespace GameOfLife.ViewModels
             IGameLayoutsRepository gameLayoutsRepository = new GameLayoutsRepository(context);
             IGameLayoutService layoutService = new GameLayoutService(gameLayoutsRepository);
             IDialogService dialogService = new DialogService();
+            IGameLogger gameLogger = new GameGameLogger();
 
             var main = new MainViewModel();
-            var playground = new PlaygroundViewModel(defaultConfiguration, main);
+            var playground = new PlaygroundViewModel(defaultConfiguration, gameLogger, main);
             var settings = new SettingsViewModel(defaultConfiguration, main);
             var saves = new SavesViewModel(saveService, dialogService, main);
             var logs = new LogsViewModel(gameLogService, main);
@@ -44,6 +45,7 @@ namespace GameOfLife.ViewModels
             SimpleIoc.Default.Register<IGameLogsRepository>(() => gameLogsRepository);
             SimpleIoc.Default.Register<IGameLogService>(() => gameLogService);
             SimpleIoc.Default.Register<IDialogService>(() => dialogService);
+            SimpleIoc.Default.Register<IGameLogger>(() => gameLogger);
 
             SimpleIoc.Default.Register<MainViewModel>(() => main);
             SimpleIoc.Default.Register<PlaygroundViewModel>(() => playground);

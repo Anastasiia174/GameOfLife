@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 
 namespace GameOfLife.Infrastructure
 {
@@ -11,5 +8,7 @@ namespace GameOfLife.Infrastructure
         public string Event { get; set; }
 
         public DateTime EventDateTime { get; set; }
+
+        public Bitmap Playground { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using GameOfLife.Infrastructure;
 using GameOfLife.Services;
 
@@ -20,6 +21,15 @@ namespace GameOfLife.ViewModels
         public LogsViewModel(IGameLogService gameLogService, MainViewModel mainViewModel) : base(mainViewModel)
         {
             _gameLogService = gameLogService;
+
+            Messenger.Default.Register<LogEventMessage>(
+                this,
+                message =>
+                {
+                    _gameLogService.SaveGameLogAsync(message.Log);
+                    message.Log.Playground = null;
+                    Logs.Add(message.Log);
+                });
         }
 
         private bool _isBusy;
