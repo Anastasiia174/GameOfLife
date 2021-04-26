@@ -8,10 +8,8 @@ namespace GameOfLife.Infrastructure
 {
     public class GameLog
     {
-        public string Title { get; set; }
+        public string Event { get; set; }
 
-        public DateTime Start { get; set; }
-
-        public DateTime End { get; set; }
+        public DateTime EventDateTime { get; set; }
     }
 }

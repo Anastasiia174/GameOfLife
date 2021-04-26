@@ -12,7 +12,5 @@ namespace GameOfLife.Services
         Task<IEnumerable<GameLog>> GetAllGameLogsAsync();
 
         Task<bool> SaveGameLogAsync(GameLog save);
-
-        Task<bool> RemoveGameLogAsync(GameLog save);
     }
 }

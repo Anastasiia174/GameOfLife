@@ -44,9 +44,8 @@
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Title}" Header="Title" Width="*"/>
-                <DataGridTextColumn Binding="{Binding Start}" Header="Start" Width="*"/>
-                <DataGridTextColumn Binding="{Binding End}" Header="End" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Event}" Header="Event" Width="*"/>
+                <DataGridTextColumn Binding="{Binding DateTime}" Header="DateTime" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
         <mah:ProgressRing Grid.Column="1" Grid.Row="5" Foreground="BlueViolet"

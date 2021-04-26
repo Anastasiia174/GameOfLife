@@ -10,11 +10,9 @@ namespace GameOfLife.Data.Entities
     {
         public int LogId { get; set; }
 
-        public string LogTitle { get; set; }
+        public string LogEvent { get; set; }
 
-        public DateTime LogStart { get; set; }
-
-        public DateTime LogEnd{ get; set; }
+        public DateTime LogEventDateTime { get; set; }
 
         public byte[] LogData { get; set; }
     }

@@ -3,25 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GameOfLife.Data;
+using GameOfLife.Data.Entities;
 using GameOfLife.Infrastructure;
 
 namespace GameOfLife.Services
 {
     public class GameLogService : IGameLogService
     {
-        public Task<IEnumerable<GameLog>> GetAllGameLogsAsync()
+        private readonly IGameLogsRepository _gameLogsRepository;
+
+        public GameLogService(IGameLogsRepository gameLogsRepository)
         {
-            throw new NotImplementedException();
+            _gameLogsRepository = gameLogsRepository;
         }
 
-        public Task<bool> SaveGameLogAsync(GameLog save)
+        public async Task<IEnumerable<GameLog>> GetAllGameLogsAsync()
         {
-            throw new NotImplementedException();
+            var gameLogs = await _gameLogsRepository.GetAllLogsAsync();
+            return gameLogs.Select(log => new GameLog()
+            {
+                Event = log.LogEvent,
+                EventDateTime = log.LogEventDateTime
+            }).ToList();
         }
 
-        public Task<bool> RemoveGameLogAsync(GameLog save)
+        public async Task<bool> SaveGameLogAsync(GameLog log)
         {
-            throw new NotImplementedException();
+            _gameLogsRepository.AddLog(new Log()
+            {
+                LogEvent = log.Event,
+                LogEventDateTime = log.EventDateTime
+            });
+
+            return await _gameLogsRepository.SaveAllAsync();
         }
     }
 }

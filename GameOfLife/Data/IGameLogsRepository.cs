@@ -13,10 +13,6 @@ namespace GameOfLife.Data
 
         Task<bool> SaveAllAsync();
 
-        Task<Log> GetLogByTitleAsync(string title);
-
         void AddLog(Log newLog);
-
-        void RemoveLog(Log log);
     }
 }
