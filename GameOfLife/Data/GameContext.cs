@@ -19,6 +19,8 @@ namespace GameOfLife.Data
 
         public DbSet<Save> Saves { get; set; }
 
+        public DbSet<Log> Logs { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

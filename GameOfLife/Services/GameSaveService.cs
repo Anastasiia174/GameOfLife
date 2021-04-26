@@ -13,9 +13,9 @@ namespace GameOfLife.Services
 {
     public class GameSaveService : IGameSaveService
     {
-        private readonly IGameRepository _gameRepository;
+        private readonly IGameSavesRepository _gameRepository;
 
-        public GameSaveService(IGameRepository gameRepository)
+        public GameSaveService(IGameSavesRepository gameRepository)
         {
             _gameRepository = gameRepository;
         }

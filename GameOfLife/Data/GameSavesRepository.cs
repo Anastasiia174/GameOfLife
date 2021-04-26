@@ -8,11 +8,11 @@ using GameOfLife.Data.Entities;
 
 namespace GameOfLife.Data
 {
-    public class GameRepository : IGameRepository
+    public class GameSavesRepository : IGameSavesRepository
     {
         private readonly GameContext _context;
 
-        public GameRepository(GameContext context)
+        public GameSavesRepository(GameContext context)
         {
             _context = context;
         }

@@ -3,10 +3,54 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:GameOfLife.Views"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:GameOfLife.Views" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            <TextBlock Text="Logs table" FontSize="32"></TextBlock>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition />
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="Game logs" Style="{StaticResource HeaderTextBlockStyle}"></TextBlock>
+
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+            <iconPacks:PackIconMaterial Kind="Magnify"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center" Width="20" Height="20"
+                                        Margin="5"/>
+            <TextBox Width="200"></TextBox>
+        </StackPanel>
+
+        <DataGrid Grid.Column="1" Grid.Row="5" AutoGenerateColumns="False" ItemsSource="{Binding Saves}" SelectedItem="{Binding SelectedSave}" IsReadOnly="True">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding LoadLogsCommand}"></i:InvokeCommandAction>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Title}" Header="Title" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Start}" Header="Start" Width="*"/>
+                <DataGridTextColumn Binding="{Binding End}" Header="End" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <mah:ProgressRing Grid.Column="1" Grid.Row="5" Foreground="BlueViolet"
+                          IsActive="{Binding IsBusy}" />
+
     </Grid>
 </UserControl>

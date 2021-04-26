@@ -7,16 +7,16 @@ using GameOfLife.Data.Entities;
 
 namespace GameOfLife.Data
 {
-    public interface IGameRepository
+    public interface IGameLogsRepository
     {
-        Task<IEnumerable<Save>> GetAllSavesAsync();
+        Task<IEnumerable<Log>> GetAllLogsAsync();
 
         Task<bool> SaveAllAsync();
 
-        Task<Save> GetSaveByTitleAsync(string title);
+        Task<Log> GetLogByTitleAsync(string title);
 
-        void AddSave(Save newSave);
+        void AddLog(Log newLog);
 
-        void RemoveSave(Save saveToRemove);
+        void RemoveLog(Log log);
     }
 }
