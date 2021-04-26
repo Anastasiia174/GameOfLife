@@ -23,18 +23,25 @@ namespace GameOfLife.ViewModels
 
             var defaultConfiguration = new GameConfiguration(20, 20, UniverseConfiguration.Limited, false);
 
-            IGameRepository gameRepository = new GameRepository(new GameContext());
+            var context = new GameContext();
+            IGameSavesRepository gameRepository = new GameSavesRepository(context);
             IGameSaveService saveService = new GameSaveService(gameRepository);
+            IGameLogsRepository gameLogsRepository = new GameLogsRepository(context);
+            IGameLogService gameLogService = new GameLogService(gameLogsRepository);
             IDialogService dialogService = new DialogService();
 
             var main = new MainViewModel();
-            var playground = new PlaygroundViewModel(defaultConfiguration, saveService, main);
+            var playground = new PlaygroundViewModel(defaultConfiguration, main);
             var settings = new SettingsViewModel(defaultConfiguration, main);
             var saves = new SavesViewModel(saveService, dialogService, main);
-            var logs = new LogsViewModel(main);
+            var logs = new LogsViewModel(gameLogService, main);
 
-            SimpleIoc.Default.Register<IGameRepository>(() => gameRepository);
+            SimpleIoc.Default.Register<IGameSavesRepository>(() => gameRepository);
             SimpleIoc.Default.Register<IGameSaveService>(() => saveService);
+            SimpleIoc.Default.Register<IGameLogsRepository>(() => gameLogsRepository);
+            SimpleIoc.Default.Register<IGameLogService>(() => gameLogService);
+            SimpleIoc.Default.Register<IDialogService>(() => dialogService);
+
             SimpleIoc.Default.Register<MainViewModel>(() => main);
             SimpleIoc.Default.Register<PlaygroundViewModel>(() => playground);
             SimpleIoc.Default.Register<SettingsViewModel>(() => settings);
@@ -44,7 +51,7 @@ namespace GameOfLife.ViewModels
             main.CreateMenuItems(
                 new List<MenuItemViewModel>()
                 {
-                    playground.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.MicrosoftXboxController }, "Play game"), 
+                    playground.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.GoogleController }, "Play game"), 
                     saves.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.ContentSaveAll }, "Saved games"), 
                     logs.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.Server }, "Game logs")
                 },

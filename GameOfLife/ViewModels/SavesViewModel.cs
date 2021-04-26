@@ -8,7 +8,6 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GameOfLife.Engine;
-using GameOfLife.Helpers.Async;
 using GameOfLife.Infrastructure;
 using GameOfLife.Services;
 
@@ -74,11 +73,11 @@ namespace GameOfLife.ViewModels
             }
         }
 
-        private ICommand _loadSavesCommand;
+        private RelayCommand _loadSavesCommand;
 
-        public ICommand LoadSavesCommand =>
+        public RelayCommand LoadSavesCommand =>
             _loadSavesCommand
-            ?? (_loadSavesCommand = new AwaitableDelegateCommand(LoadSavesAsync));
+            ?? (_loadSavesCommand = new RelayCommand(LoadSavesAsync));
 
         private RelayCommand _saveCommand;
 
@@ -98,11 +97,11 @@ namespace GameOfLife.ViewModels
             _loadRandomCommand ??
             (_loadRandomCommand = new RelayCommand(LoadRandom, () => Saves.Any()));
 
-        private ICommand _removeCommand;
+        private RelayCommand _removeCommand;
 
-        public ICommand RemoveCommand =>
+        public RelayCommand RemoveCommand =>
             _removeCommand ??
-            (_removeCommand = new AwaitableDelegateCommand(RemoveSaveAsync, () => SelectedSave != null));
+            (_removeCommand = new RelayCommand(RemoveSaveAsync, () => SelectedSave != null));
 
         private void SaveGame()
         {
@@ -144,7 +143,7 @@ namespace GameOfLife.ViewModels
             Messenger.Default.Send(configMessage, "Settings");
         }
 
-        private async Task RemoveSaveAsync()
+        private async void RemoveSaveAsync()
         {
             IsBusy = true;
             await _gameSaveService.RemoveGameSaveAsync(SelectedSave);
@@ -153,7 +152,7 @@ namespace GameOfLife.ViewModels
             Saves.Remove(SelectedSave);
         }
 
-        private async Task SaveGame(GameSave save)
+        private async void SaveGame(GameSave save)
         {
             IsBusy = true;
             await _gameSaveService.SaveGameSaveAsync(save);
@@ -162,7 +161,7 @@ namespace GameOfLife.ViewModels
             Saves.Add(save);
         }
 
-        private async Task LoadSavesAsync()
+        private async void LoadSavesAsync()
         {
             if (!_isLoaded)
             {

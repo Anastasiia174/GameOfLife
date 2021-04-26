@@ -5,8 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using GameOfLife.Engine;
-using GameOfLife.Helpers.Async;
+using GalaSoft.MvvmLight.Command;
 using GameOfLife.Infrastructure;
 using GameOfLife.Services;
 
@@ -45,13 +44,13 @@ namespace GameOfLife.ViewModels
             }
         }
 
-        private ICommand _loadLogsCommand;
+        private RelayCommand _loadLogsCommand;
 
-        public ICommand LoadLogsCommand =>
+        public RelayCommand LoadLogsCommand =>
             _loadLogsCommand
-            ?? (_loadLogsCommand = new AwaitableDelegateCommand(LoadLogsAsync));
+            ?? (_loadLogsCommand = new RelayCommand(LoadLogsAsync));
 
-        private async Task LoadLogsAsync()
+        private async void LoadLogsAsync()
         {
             if (!_isLoaded)
             {
