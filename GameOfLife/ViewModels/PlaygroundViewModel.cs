@@ -20,8 +20,6 @@ namespace GameOfLife.ViewModels
 {
     public class PlaygroundViewModel : MenuItemViewModel
     {
-        private readonly IGameSaveService _gameSaveService;
-
         private readonly DispatcherTimer _timer;
 
         private readonly IGameEngine _gameEngine;
@@ -34,9 +32,8 @@ namespace GameOfLife.ViewModels
 
         private UniverseConfiguration _universeConfiguration;
 
-        public PlaygroundViewModel(GameConfiguration configuration, IGameSaveService gameSaveService, MainViewModel mainViewModel) : base(mainViewModel)
+        public PlaygroundViewModel(GameConfiguration configuration, MainViewModel mainViewModel) : base(mainViewModel)
         {
-            _gameSaveService = gameSaveService;
             _width = configuration.Width;
             _height = configuration.Height;
             _universeConfiguration = configuration.UniverseConfiguration;
@@ -58,7 +55,7 @@ namespace GameOfLife.ViewModels
             Messenger.Default.Register<LoadSaveMessage>(
                 this,
                 message =>
-                LoadGameSave(message.GameToSave));
+                LoadGameSave(message.GameToLoad));
 
             Messenger.Default.Register<SaveGameMessage>(
                 this,
@@ -79,8 +76,26 @@ namespace GameOfLife.ViewModels
                         message.ErrorAction("The game has been already saved.");
                     }
                 });
-        }
 
+            Messenger.Default.Register<SaveLayoutMessage>(
+                this,
+                message =>
+                {
+                    if (GameStarted)
+                    {
+                        message.ErrorAction("Layout could be save only before game has been started.");
+                        return;
+                    }
+
+                    message.SaveAction(new GameLayout() {Layout = PlaygroundImageSource});
+                });
+
+            Messenger.Default.Register<LoadLayoutMessage>(
+                this,
+                message =>
+                    LoadLayout(message.GameLayout));
+        }
+        
         private Bitmap _playgroundImageSource;
 
         public Bitmap PlaygroundImageSource
@@ -289,6 +304,24 @@ namespace GameOfLife.ViewModels
             GameEnded = _gameEngine.GameEnded;
             PlaygroundImageSource = _gameEngine.Playground;
             Title = save.Title;
+        }
+        
+        private void LoadLayout(GameLayout layout)
+        {
+            _gameEngine.LoadGame(new GameSave()
+            {
+                Playground = layout.Layout,
+                GameEnded = false,
+                GenerationNumber = 0,
+                UniverseConfiguration = UniverseConfiguration.Limited
+            });
+
+            _width = layout.Layout.Width;
+            _height = layout.Layout.Height;
+            GenerationNumber = _gameEngine.CurrentGenerationNumber;
+            GameEnded = _gameEngine.GameEnded;
+            PlaygroundImageSource = _gameEngine.Playground;
+            Title = "New game*";
         }
     }
 }

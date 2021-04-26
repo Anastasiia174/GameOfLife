@@ -121,11 +121,12 @@ namespace GameOfLife.ViewModels
             Messenger.Default.Send(saveGameMessage);
         }
 
-        private void LoadSave()
+        private async void LoadSave()
         {
-            var saveMessage = new LoadSaveMessage(SelectedSave);
-            var configMessage = new ConfigMessage(new GameConfiguration(SelectedSave.Playground.Width,
-                SelectedSave.Playground.Height, SelectedSave.UniverseConfiguration));
+            var save = await _gameSaveService.GetGameSaveByTitleAsync(SelectedSave.Title);
+            var saveMessage = new LoadSaveMessage(save);
+            var configMessage = new ConfigMessage(new GameConfiguration(save.Playground.Width,
+                save.Playground.Height, save.UniverseConfiguration));
 
             Messenger.Default.Send(saveMessage);
             Messenger.Default.Send(configMessage, "Settings");
@@ -158,6 +159,8 @@ namespace GameOfLife.ViewModels
             await _gameSaveService.SaveGameSaveAsync(save);
             IsBusy = false;
 
+            //clear playground
+            save.Playground = null;
             Saves.Add(save);
         }
 
