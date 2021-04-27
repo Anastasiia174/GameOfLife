@@ -37,6 +37,9 @@
                        Cursor="Hand"
                        helpers:MouseBehaviour.MouseUpCommand="{Binding ToggleCellStateCommand}"
                        Source="{Binding PlaygroundImageSource, Mode=OneWay, Converter={StaticResource ImageConverter}}">
+                    <Image.RenderTransform>
+                        <ScaleTransform x:Name="ImageScale"></ScaleTransform>
+                    </Image.RenderTransform>
                 </Image>
             </ScrollViewer>
         </Grid>
