@@ -10,6 +10,8 @@ namespace GameOfLife.Engine
 
         Bitmap Playground { get; }
 
+        UniverseConfiguration Configuration { get; set; }
+
         void MoveToNextGeneration();
 
         void ChangeUniverseState(Cell cell);

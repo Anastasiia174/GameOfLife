@@ -7,16 +7,12 @@ namespace GameOfLife.Engine
     {
         private const int PixelsPerCell = 1;
 
-        //private readonly int _borderWidth;
-
         private Cell[,] _cells;
 
         public Playground(int width, int height, UniverseConfiguration configuration = UniverseConfiguration.Limited)
         {
             Width = width;
             Height = height;
-
-            //_borderWidth = borderWidth;
             Configuration = configuration;
 
             CreatePlayground();
@@ -114,8 +110,8 @@ namespace GameOfLife.Engine
 
         private void CreatePlayground()
         {
-            var imageWidth = Width * PixelsPerCell /*+ _borderWidth*/;
-            var imageHeight = Height * PixelsPerCell /*+ _borderWidth*/;
+            var imageWidth = Width * PixelsPerCell;
+            var imageHeight = Height * PixelsPerCell;
 
             var bitmap = new Bitmap(imageWidth, imageHeight);
 
@@ -123,16 +119,6 @@ namespace GameOfLife.Engine
             {
                 graphics.FillRectangle(Brushes.WhiteSmoke, 0, 0, imageWidth, imageHeight);
             }
-
-            //for (int y = 0; y < imageHeight; y += _pixelsPerCell)
-            //{
-            //    graphics.FillRectangle(Brushes.Gray, 0, y, imageWidth, _borderWidth);
-            //}
-
-            //for (int x = 0; x < imageWidth; x += _pixelsPerCell)
-            //{
-            //    graphics.FillRectangle(Brushes.Gray, x, 0, _borderWidth, imageHeight);
-            //}
 
             Body = bitmap;
         }

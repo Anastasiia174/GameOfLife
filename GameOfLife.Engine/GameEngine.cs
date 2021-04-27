@@ -7,13 +7,13 @@ namespace GameOfLife.Engine
 {
     public class GameEngine : IGameEngine
     {
-        private  UniverseConfiguration _configuration;
-
         private int _width;
 
         private int _height;
 
         private Playground _playground;
+
+        private UniverseConfiguration _configuration;
 
         public GameEngine(int width, int height, UniverseConfiguration configuration)
         {
@@ -29,6 +29,16 @@ namespace GameOfLife.Engine
         public bool GameEnded { get; private set; }
 
         public Bitmap Playground => _playground.Body;
+
+        public UniverseConfiguration Configuration
+        {
+            get => _configuration;
+            set
+            {
+                _configuration = value;
+                _playground.Configuration = _configuration;
+            }
+        }
 
         public void MoveToNextGeneration()
         {

@@ -281,12 +281,21 @@ namespace GameOfLife.ViewModels
 
         private void ChangeConfiguration(GameConfiguration configuration)
         {
-            _width = configuration.Width;
-            _height = configuration.Height;
             _universeConfiguration = configuration.UniverseConfiguration;
             IsEditable = configuration.IsEditable;
 
-            ResetGame();
+            _gameLogger.LogInfo($"Configuration was changed");
+
+            if (_width == configuration.Width && _height == configuration.Height)
+            {
+                _gameEngine.Configuration = configuration.UniverseConfiguration;
+            }
+            else
+            {
+                _width = configuration.Width;
+                _height = configuration.Height;
+                ResetGame();
+            }
         }
 
         private GameSave SaveGame(string title)

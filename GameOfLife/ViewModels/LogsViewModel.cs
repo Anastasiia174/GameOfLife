@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GameOfLife.Infrastructure;
@@ -24,6 +25,7 @@ namespace GameOfLife.ViewModels
                     message.Log.Playground = null;
                     Logs.Add(message.Log);
                 });
+            _logs = new ObservableCollection<GameLog>();
         }
 
         private bool _isBusy;
@@ -41,7 +43,7 @@ namespace GameOfLife.ViewModels
 
         public ObservableCollection<GameLog> Logs
         {
-            get => _logs ?? (_logs = new ObservableCollection<GameLog>());
+            get => _logs;
             set
             {
                 Set(() => Logs, ref _logs, value);
