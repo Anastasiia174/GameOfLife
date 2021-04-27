@@ -18,6 +18,9 @@ namespace GameOfLife.ViewModels
             var defaultConfiguration = new GameConfiguration(20, 20, UniverseConfiguration.Limited, false);
 
             var context = new GameContext();
+
+            bool isDbConnected = context.Database.Exists();
+
             IGameSavesRepository gameRepository = new GameSavesRepository(context);
             IGameSaveService saveService = new GameSaveService(gameRepository);
             IGameLogsRepository gameLogsRepository = new GameLogsRepository(context);
@@ -27,11 +30,16 @@ namespace GameOfLife.ViewModels
             IDialogService dialogService = new DialogService();
             IGameLogger gameLogger = new GameGameLogger();
 
+            if (!isDbConnected)
+            {
+                dialogService.ShowMessage("Could not connect to database. Saving, layouts and logging would not be available.");
+            }
+
             var main = new MainViewModel();
             var playground = new PlaygroundViewModel(defaultConfiguration, gameLogger, main);
             var settings = new SettingsViewModel(defaultConfiguration, main);
             var saves = new SavesViewModel(saveService, dialogService, main);
-            var logs = new LogsViewModel(gameLogService, main);
+            var logs = new LogsViewModel(isDbConnected ? gameLogService : null, dialogService, main);
             var layouts = new LayoutsViewModel(layoutService, dialogService, main);
 
             SimpleIoc.Default.Register<IGameSavesRepository>(() => gameRepository);
@@ -52,9 +60,9 @@ namespace GameOfLife.ViewModels
                 new List<MenuItemViewModel>()
                 {
                     playground.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.GoogleController }, "Play game"), 
-                    layouts.SetStyle(new PackIconMaterial() {Kind = PackIconMaterialKind.DotsHexagon}, "Layouts"),
-                    saves.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.ContentSaveAll }, "Saved games"), 
-                    logs.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.Server }, "Game logs")
+                    layouts.SetStyle(new PackIconMaterial() {Kind = PackIconMaterialKind.DotsHexagon}, "Layouts", isDbConnected),
+                    saves.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.ContentSaveAll }, "Saved games", isDbConnected), 
+                    logs.SetStyle(new PackIconMaterial() { Kind = PackIconMaterialKind.Server }, "Game logs", isDbConnected)
                 },
                 new List<MenuItemViewModel>()
                 {

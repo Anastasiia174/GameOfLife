@@ -34,10 +34,11 @@ namespace GameOfLife.ViewModels
             set => Set(() => IsVisible, ref _isVisible, value);
         }
 
-        public MenuItemViewModel SetStyle(object icon, object label)
+        public MenuItemViewModel SetStyle(object icon, object label, bool isVisible = true)
         {
             Icon = icon;
             Label = label;
+            IsVisible = isVisible;
 
             return this;
         }

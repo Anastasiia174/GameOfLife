@@ -13,22 +13,24 @@ namespace GameOfLife.ViewModels
     {
         private readonly IGameLogService _gameLogService;
 
+        private readonly IDialogService _dialogService;
+
         private bool _isLoaded;
 
-        public LogsViewModel(IGameLogService gameLogService, MainViewModel mainViewModel) : base(mainViewModel)
+        public LogsViewModel(IGameLogService gameLogService, IDialogService dialogService, MainViewModel mainViewModel) : base(mainViewModel)
         {
             _gameLogService = gameLogService;
+            _dialogService = dialogService;
 
             Logs = new ObservableCollection<GameLog>();
 
-            Messenger.Default.Register<LogEventMessage>(
-                this,
-                message =>
-                {
-                    _gameLogService.SaveGameLogAsync(message.Log);
-                    message.Log.Playground = null;
-                    Logs.Add(message.Log);
-                });
+            // subscribe to log messages only if service exists
+            if (_gameLogService != null)
+            {
+                Messenger.Default.Register<LogEventMessage>(
+                    this,
+                    SaveLog);
+            }
         }
 
         private bool _isBusy;
@@ -129,6 +131,18 @@ namespace GameOfLife.ViewModels
                 }
             }
             return result;
+        }
+
+        private async void SaveLog(LogEventMessage message)
+        {
+            var result = await _gameLogService.SaveGameLogAsync(message.Log);
+            if (!result)
+            {
+                _dialogService.ShowMessage("Could not save log to database.");
+            }
+
+            message.Log.Playground = null;
+            Logs.Add(message.Log);
         }
     }
 }
