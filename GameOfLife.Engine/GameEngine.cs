@@ -151,5 +151,10 @@ namespace GameOfLife.Engine
 
             return numberOfAliveNeighbours;
         }
+
+        public void Dispose()
+        {
+            _playground?.Dispose();
+        }
     }
 }

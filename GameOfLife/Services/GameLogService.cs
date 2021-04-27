@@ -30,14 +30,32 @@ namespace GameOfLife.Services
 
         public async Task<bool> SaveGameLogAsync(GameLog log)
         {
-            _gameLogsRepository.AddLog(new Log()
+            bool result;
+            try
             {
-                LogEvent = log.Event,
-                LogEventDateTime = log.EventDateTime,
-                LogData = log.Playground != null ? ImageConverter.ImageToByteArray(log.Playground, ImageFormat.Bmp) : null
-            });
+                _gameLogsRepository.AddLog(new Log()
+                {
+                    LogEvent = log.Event,
+                    LogEventDateTime = log.EventDateTime,
+                    LogData = log.Playground != null
+                        ? ImageConverter.ImageToByteArray(log.Playground, ImageFormat.Bmp)
+                        : null
+                });
 
-            return await _gameLogsRepository.SaveAllAsync();
+
+                result = await _gameLogsRepository.SaveAllAsync();
+            }
+            catch
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        public void Dispose()
+        {
+            _gameLogsRepository?.Dispose();
         }
     }
 }

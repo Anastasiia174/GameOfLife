@@ -68,5 +68,10 @@ namespace GameOfLife.Services
 
             return false;
         }
+
+        public void Dispose()
+        {
+            _layoutsRepository?.Dispose();
+        }
     }
 }

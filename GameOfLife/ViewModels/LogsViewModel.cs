@@ -96,6 +96,15 @@ namespace GameOfLife.ViewModels
             _loadLogsCommand
             ?? (_loadLogsCommand = new RelayCommand(LoadLogsAsync));
 
+        public override void Cleanup()
+        {
+            _gameLogService?.Dispose();
+            Logs?.Clear();
+            FilteredLogs = null;
+
+            base.Cleanup();
+        }
+
         private async void LoadLogsAsync()
         {
             if (!_isLoaded)

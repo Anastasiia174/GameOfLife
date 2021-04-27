@@ -99,6 +99,14 @@ namespace GameOfLife.ViewModels
             _removeCommand ??
             (_removeCommand = new RelayCommand(RemoveSaveAsync, () => SelectedSave != null));
 
+        public override void Cleanup()
+        {
+            _gameSaveService?.Dispose();
+            Saves?.Clear();
+
+            base.Cleanup();
+        }
+
         private void SaveGame()
         {
             if (_saves.Any(s => s.Title == GameTitle))

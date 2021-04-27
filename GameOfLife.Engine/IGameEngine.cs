@@ -1,8 +1,9 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace GameOfLife.Engine
 {
-    public interface IGameEngine
+    public interface IGameEngine : IDisposable
     {
         int CurrentGenerationNumber { get; }
 

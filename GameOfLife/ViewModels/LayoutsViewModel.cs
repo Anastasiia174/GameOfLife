@@ -98,6 +98,14 @@ namespace GameOfLife.ViewModels
             _deleteCommand ??
             (_deleteCommand = new RelayCommand(RemoveLayoutAsync, () => SelectedLayout != null));
 
+        public override void Cleanup()
+        {
+            _gameLayoutService?.Dispose();
+            Layouts?.Clear();
+
+            base.Cleanup();
+        }
+
         private void SaveLayout()
         {
             if (_layouts.Any(s => s.Title == LayoutTitle))

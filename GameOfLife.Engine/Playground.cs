@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace GameOfLife.Engine
 {
-    internal class Playground
+    internal class Playground : IDisposable
     {
         private const int PixelsPerCell = 1;
 
@@ -134,6 +134,12 @@ namespace GameOfLife.Engine
                     _cells[x, y] = new Cell(x, y, false);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            Body?.Dispose();
+            _cells = null;
         }
     }
 }

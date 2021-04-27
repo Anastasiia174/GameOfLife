@@ -31,5 +31,10 @@ namespace GameOfLife.Data
         {
             _context.Logs.Add(newLog);
         }
+
+        public void Dispose()
+        {
+            _context?.Dispose();
+        }
     }
 }

@@ -44,5 +44,10 @@ namespace GameOfLife.Data
         {
             _context.Saves.Remove(saveToRemove);
         }
+
+        public void Dispose()
+        {
+            _context?.Dispose();
+        }
     }
 }

@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameOfLife.Engine;
 
 namespace GameOfLife.Services
 {
-    public interface IGameSaveService
+    public interface IGameSaveService : IDisposable
     {
         Task<IEnumerable<GameSave>> GetAllGameSavesAsync(bool includePlayground = false);
 

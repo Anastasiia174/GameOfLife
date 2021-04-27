@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameOfLife.Infrastructure;
 
 namespace GameOfLife.Services
 {
-    public interface IGameLogService
+    public interface IGameLogService : IDisposable   
     {
         Task<IEnumerable<GameLog>> GetAllGameLogsAsync();
 

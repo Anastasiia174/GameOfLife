@@ -208,6 +208,14 @@ namespace GameOfLife.ViewModels
                 ToggleCellState, 
                 (state) => !GameStarted || (!GameRunning && IsEditable)));
 
+        public override void Cleanup()
+        {
+            _gameEngine?.Dispose();
+            PlaygroundImageSource?.Dispose();
+
+            base.Cleanup();
+        }
+
         private void StartGame()
         {
             if (GenerationNumber == 0)
