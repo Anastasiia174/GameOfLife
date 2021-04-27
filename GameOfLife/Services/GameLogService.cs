@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
 using GameOfLife.Data;
 using GameOfLife.Data.Entities;
+using GameOfLife.Extensions;
 using GameOfLife.Infrastructure;
 
 namespace GameOfLife.Services
@@ -31,7 +33,8 @@ namespace GameOfLife.Services
             _gameLogsRepository.AddLog(new Log()
             {
                 LogEvent = log.Event,
-                LogEventDateTime = log.EventDateTime
+                LogEventDateTime = log.EventDateTime,
+                LogData = log.Playground != null ? ImageConverter.ImageToByteArray(log.Playground, ImageFormat.Bmp) : null
             });
 
             return await _gameLogsRepository.SaveAllAsync();

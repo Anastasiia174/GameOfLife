@@ -30,14 +30,13 @@
         <TextBlock Grid.Row="1" Grid.Column="1" Text="Game logs" Style="{StaticResource HeaderTextBlockStyle}"></TextBlock>
 
         <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="Magnify"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center" Width="20" Height="20"
-                                        Margin="5"/>
-            <TextBox Width="200"></TextBox>
+            <Label Content="Start: "></Label>
+            <mah:DateTimePicker x:Name="StartDateTime" Grid.Row="5" Grid.Column="3" SelectedDateTime="{Binding SelectedStartDateTime, UpdateSourceTrigger=PropertyChanged}" Margin="0 0 10 0"></mah:DateTimePicker>
+            <Label Content="End: "></Label>
+            <mah:DateTimePicker x:Name="EndDateTime" Grid.Row="5" Grid.Column="3" SelectedDateTime="{Binding SelectedEndDateTime, UpdateSourceTrigger=PropertyChanged}"></mah:DateTimePicker>
         </StackPanel>
 
-        <DataGrid Grid.Column="1" Grid.Row="5" AutoGenerateColumns="False" ItemsSource="{Binding Logs}" IsReadOnly="True">
+        <DataGrid Grid.Column="1" Grid.Row="5" AutoGenerateColumns="False" ItemsSource="{Binding FilteredLogs}" IsReadOnly="True">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Loaded">
                     <i:InvokeCommandAction Command="{Binding LoadLogsCommand}"></i:InvokeCommandAction>

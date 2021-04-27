@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GameOfLife.Infrastructure;
@@ -25,7 +27,6 @@ namespace GameOfLife.ViewModels
                     message.Log.Playground = null;
                     Logs.Add(message.Log);
                 });
-            _logs = new ObservableCollection<GameLog>();
         }
 
         private bool _isBusy;
@@ -39,6 +40,30 @@ namespace GameOfLife.ViewModels
             }
         }
 
+        private DateTime? _selectedStartDateTime;
+
+        public DateTime? SelectedStartDateTime
+        {
+            get => _selectedStartDateTime;
+            set
+            {
+                Set(() => SelectedStartDateTime, ref _selectedStartDateTime, value);
+                FilteredLogs.Refresh();
+            }
+        }
+
+        private DateTime? _selectedEndDateTime;
+
+        public DateTime? SelectedEndDateTime
+        {
+            get => _selectedEndDateTime;
+            set
+            {
+                Set(() => SelectedEndDateTime, ref _selectedEndDateTime, value);
+                FilteredLogs.Refresh();
+            }
+        }
+
         private ObservableCollection<GameLog> _logs;
 
         public ObservableCollection<GameLog> Logs
@@ -47,6 +72,17 @@ namespace GameOfLife.ViewModels
             set
             {
                 Set(() => Logs, ref _logs, value);
+            }
+        }
+
+        private ListCollectionView _filteredLogs;
+
+        public ListCollectionView FilteredLogs
+        {
+            get => _filteredLogs;
+            set
+            {
+                Set(() => FilteredLogs, ref _filteredLogs, value);
             }
         }
 
@@ -65,8 +101,32 @@ namespace GameOfLife.ViewModels
                 IsBusy = false;
 
                 Logs = new ObservableCollection<GameLog>(logs);
+                FilteredLogs = new ListCollectionView(Logs) { Filter = Filter };
                 _isLoaded = true;
             }
+        }
+
+        private bool Filter(object obj)
+        {
+            bool result = true;
+
+            if (obj is GameLog current)
+            {
+                if (SelectedStartDateTime != null && SelectedEndDateTime == null)
+                {
+                    result = current.EventDateTime >= SelectedStartDateTime.Value;
+                }
+                else if (SelectedStartDateTime != null && SelectedEndDateTime != null)
+                {
+                    result = current.EventDateTime >= SelectedStartDateTime.Value &&
+                             current.EventDateTime <= SelectedEndDateTime.Value;
+                }
+                else if (SelectedStartDateTime == null && SelectedEndDateTime != null)
+                {
+                    result = current.EventDateTime <= SelectedEndDateTime.Value;
+                }
+            }
+            return result;
         }
     }
 }
