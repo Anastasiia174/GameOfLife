@@ -13,11 +13,15 @@ namespace GameOfLife.ViewModels
 {
     public class PlaygroundViewModel : MenuItemViewModel
     {
+        private const int DefaultDelay = 400;
+
         private readonly IGameLogger _gameLogger;
 
         private readonly DispatcherTimer _timer;
 
         private readonly IGameEngine _gameEngine;
+
+        private readonly object _locker;
 
         private int _width;
 
@@ -40,7 +44,7 @@ namespace GameOfLife.ViewModels
             PlaygroundImageSource = _gameEngine.Playground;
             Title = "New game*";
 
-            _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(500) };
+            _timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(DefaultDelay) };
             _timer.Tick += UpdatePlayground;
 
             Messenger.Default.Register<ConfigMessage>(
@@ -90,6 +94,8 @@ namespace GameOfLife.ViewModels
                 this,
                 message =>
                     LoadLayout(message.GameLayout));
+
+            _locker = new object();
         }
         
         private Bitmap _playgroundImageSource;
@@ -217,12 +223,26 @@ namespace GameOfLife.ViewModels
 
         private async void UpdatePlayground(object sender, object e)
         {
+            var timer = Stopwatch.StartNew();
+
             await Task.Factory.StartNew(() =>
             {
+                lock (_locker)
                 {
                     _gameEngine.MoveToNextGeneration();
                 }
             });
+
+            timer.Stop();
+            // adjust update delay
+            if (timer.ElapsedMilliseconds > DefaultDelay)
+            {
+                _timer.Interval = TimeSpan.FromMilliseconds(timer.ElapsedMilliseconds * 1.2);
+            }
+            else
+            {
+                _timer.Interval = TimeSpan.FromMilliseconds(DefaultDelay);
+            }
 
             RaisePropertyChanged(() => PlaygroundImageSource);
             GameEnded = _gameEngine.GameEnded;
@@ -230,9 +250,7 @@ namespace GameOfLife.ViewModels
 
             if (GameEnded)
             {
-                _timer.Stop();
-                GameRunning = false;
-
+                PauseGame();
                 _gameLogger.LogInfo($"Game {Title} has been ended", PlaygroundImageSource);
             }
         }
@@ -312,6 +330,11 @@ namespace GameOfLife.ViewModels
 
         private void LoadGameSave(GameSave save)
         {
+            if (GameRunning)
+            {
+                PauseGame();
+            }
+
             _gameEngine.LoadGame(save);
 
             _width = save.Playground.Width;
@@ -326,6 +349,11 @@ namespace GameOfLife.ViewModels
         
         private void LoadLayout(GameLayout layout)
         {
+            if (GameRunning)
+            {
+                PauseGame();
+            }
+
             _gameEngine.LoadGame(new GameSave()
             {
                 Playground = layout.Layout,

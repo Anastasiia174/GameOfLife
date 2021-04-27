@@ -19,6 +19,8 @@ namespace GameOfLife.ViewModels
         {
             _gameLogService = gameLogService;
 
+            Logs = new ObservableCollection<GameLog>();
+
             Messenger.Default.Register<LogEventMessage>(
                 this,
                 message =>
