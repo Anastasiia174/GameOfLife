@@ -128,44 +128,75 @@ namespace GameOfLife.ViewModels
         private async void LoadSave()
         {
             var save = await _gameSaveService.GetGameSaveByTitleAsync(SelectedSave.Title);
-            var saveMessage = new LoadSaveMessage(save);
-            var configMessage = new ConfigMessage(new GameConfiguration(save.Playground.Width,
-                save.Playground.Height, save.UniverseConfiguration));
 
-            Messenger.Default.Send(saveMessage);
-            Messenger.Default.Send(configMessage, "Settings");
+            if (save != null)
+            {
+                var saveMessage = new LoadSaveMessage(save);
+                var configMessage = new ConfigMessage(new GameConfiguration(save.Playground.Width,
+                    save.Playground.Height, save.UniverseConfiguration));
+
+                Messenger.Default.Send(saveMessage);
+                Messenger.Default.Send(configMessage, "Settings");
+            }
+            else
+            {
+                _dialogService.ShowMessage($"Could not load save \"{SelectedSave.Title}\" from database");
+            }
         }
 
-        private void LoadRandom()
+        private async void LoadRandom()
         {
             var random = new Random((int)DateTime.Now.Ticks);
-            var randomSave = Saves.ElementAt(random.Next(Saves.Count));
-            var saveMessage = new LoadSaveMessage(randomSave);
-            var configMessage = new ConfigMessage(new GameConfiguration(randomSave.Playground.Width,
-                randomSave.Playground.Height, randomSave.UniverseConfiguration));
+            var randomSaveTitle = Saves.ElementAt(random.Next(Saves.Count)).Title;
+            var save = await _gameSaveService.GetGameSaveByTitleAsync(randomSaveTitle);
 
-            Messenger.Default.Send(saveMessage);
-            Messenger.Default.Send(configMessage, "Settings");
+            if (save != null)
+            {
+                var saveMessage = new LoadSaveMessage(save);
+                var configMessage = new ConfigMessage(new GameConfiguration(save.Playground.Width,
+                    save.Playground.Height, save.UniverseConfiguration));
+
+                Messenger.Default.Send(saveMessage);
+                Messenger.Default.Send(configMessage, "Settings");
+            }
+            else
+            {
+                _dialogService.ShowMessage($"Could not load save \"{randomSaveTitle}\" from database");
+            }
         }
 
         private async void RemoveSaveAsync()
         {
             IsBusy = true;
-            await _gameSaveService.RemoveGameSaveAsync(SelectedSave);
+            var result = await _gameSaveService.RemoveGameSaveAsync(SelectedSave);
             IsBusy = false;
 
-            Saves.Remove(SelectedSave);
+            if (result)
+            {
+                Saves.Remove(SelectedSave);
+            }
+            else
+            {
+                _dialogService.ShowMessage($"Could not remove save \"{SelectedSave.Title}\" from database");
+            }
         }
 
         private async void SaveGame(GameSave save)
         {
             IsBusy = true;
-            await _gameSaveService.SaveGameSaveAsync(save);
+            var result = await _gameSaveService.SaveGameSaveAsync(save);
             IsBusy = false;
 
-            //clear playground
-            save.Playground = null;
-            Saves.Add(save);
+            if (result)
+            {
+                //clear playground
+                save.Playground = null;
+                Saves.Add(save);
+            }
+            else
+            {
+                _dialogService.ShowMessage($"Could not save \"{SelectedSave.Title}\" to database");
+            }
         }
 
         private async void LoadSavesAsync()
@@ -176,7 +207,15 @@ namespace GameOfLife.ViewModels
                 var saves = await _gameSaveService.GetAllGameSavesAsync();
                 IsBusy = false;
 
-                Saves = new ObservableCollection<GameSave>(saves);
+                if (saves != null)
+                {
+                    Saves = new ObservableCollection<GameSave>(saves);
+                }
+                else
+                {
+                    _dialogService.ShowMessage("Could not load game saves from database");
+                }
+
                 _isLoaded = true;
             }
         }

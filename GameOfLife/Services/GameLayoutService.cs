@@ -17,43 +17,76 @@ namespace GameOfLife.Services
         {
             _layoutsRepository = layoutsRepository;
         }
+
         public async Task<IEnumerable<GameLayout>> GetAllGameLayoutsAsync(bool includeLayout = false)
         {
-            var gameLayouts = await _layoutsRepository.GetAllLayoutsAsync();
-
-            return gameLayouts.Select(l => new GameLayout()
+            IEnumerable<GameLayout> result;
+            try
             {
-                Title = l.LayoutTitle,
-                Layout = includeLayout ? ImageConverter.ByteArrayToBitmap(l.LayoutData) : null,
-                
-            }).ToList();
+                var gameLayouts = await _layoutsRepository.GetAllLayoutsAsync();
+
+                result = gameLayouts.Select(l => new GameLayout()
+                {
+                    Title = l.LayoutTitle,
+                    Layout = includeLayout ? ImageConverter.ByteArrayToBitmap(l.LayoutData) : null,
+
+                }).ToList();
+            }
+            catch
+            {
+                result = null;
+            }
+
+            return result;
         }
 
         public async Task<GameLayout> GetGameLayoutByTitleAsync(string title)
         {
-            var repoLayout = await _layoutsRepository.GetLayoutByTitleAsync(title);
-
-            if (repoLayout != null)
+            GameLayout result;
+            try
             {
-                return new GameLayout()
+                var repoLayout = await _layoutsRepository.GetLayoutByTitleAsync(title);
+
+                if (repoLayout != null)
                 {
-                    Title = repoLayout.LayoutTitle,
-                    Layout = ImageConverter.ByteArrayToBitmap(repoLayout.LayoutData)
-                };
+                    result = new GameLayout()
+                    {
+                        Title = repoLayout.LayoutTitle,
+                        Layout = ImageConverter.ByteArrayToBitmap(repoLayout.LayoutData)
+                    };
+                }
+                else
+                {
+                    result = null;
+                }
+            }
+            catch
+            {
+                result = null;
             }
 
-            return null;
+            return result;
         }
 
         public async Task<bool> SaveGameLayoutAsync(GameLayout layout)
         {
-            _layoutsRepository.AddLayout(new Layout()
+            bool result;
+            try
             {
-                LayoutTitle = layout.Title,
-                LayoutData = ImageConverter.ImageToByteArray(layout.Layout, ImageFormat.Bmp)
-            });
+                _layoutsRepository.AddLayout(new Layout()
+                {
+                    LayoutTitle = layout.Title,
+                    LayoutData = ImageConverter.ImageToByteArray(layout.Layout, ImageFormat.Bmp)
+                });
 
-            return await _layoutsRepository.SaveAllAsync();
+                result = await _layoutsRepository.SaveAllAsync();
+            }
+            catch
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         public async Task<bool> RemoveGameLayoutAsync(GameLayout layout)

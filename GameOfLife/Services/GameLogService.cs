@@ -20,12 +20,22 @@ namespace GameOfLife.Services
 
         public async Task<IEnumerable<GameLog>> GetAllGameLogsAsync()
         {
-            var gameLogs = await _gameLogsRepository.GetAllLogsAsync();
-            return gameLogs.Select(log => new GameLog()
+            IEnumerable<GameLog> result;
+            try
             {
-                Event = log.LogEvent,
-                EventDateTime = log.LogEventDateTime
-            }).ToList();
+                var gameLogs = await _gameLogsRepository.GetAllLogsAsync();
+                result = gameLogs.Select(log => new GameLog()
+                {
+                    Event = log.LogEvent,
+                    EventDateTime = log.LogEventDateTime
+                }).ToList();
+            }
+            catch
+            {
+                result = null;
+            }
+
+            return result;
         }
 
         public async Task<bool> SaveGameLogAsync(GameLog log)

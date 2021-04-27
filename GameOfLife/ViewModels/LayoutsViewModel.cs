@@ -127,34 +127,56 @@ namespace GameOfLife.ViewModels
         {
             var layout = await _gameLayoutService.GetGameLayoutByTitleAsync(SelectedLayout.Title);
 
-            var loadLayoutMessage = new LoadLayoutMessage(layout);
-            var configMessage = new ConfigMessage(new GameConfiguration(layout.Layout.Width,
-                layout.Layout.Height));
+            if (layout != null)
+            {
+                var loadLayoutMessage = new LoadLayoutMessage(layout);
+                var configMessage = new ConfigMessage(new GameConfiguration(layout.Layout.Width,
+                    layout.Layout.Height));
 
-            Messenger.Default.Send(loadLayoutMessage);
-            Messenger.Default.Send(configMessage, "Settings");
+                Messenger.Default.Send(loadLayoutMessage);
+                Messenger.Default.Send(configMessage, "Settings");
+            }
+            else
+            {
+                _dialogService.ShowMessage($"Could not load layout \"{SelectedLayout.Title}\" from database");
+            }
         }
 
         private async void LoadRandomLayout()
         {
             var random = new Random((int)DateTime.Now.Ticks);
-            var randomLayout = Layouts.ElementAt(random.Next(Layouts.Count));
-            var layoutFromDb = await _gameLayoutService.GetGameLayoutByTitleAsync(randomLayout.Title);
-            var loadLayoutMessage = new LoadLayoutMessage(layoutFromDb);
-            var configMessage = new ConfigMessage(new GameConfiguration(layoutFromDb.Layout.Width,
-                layoutFromDb.Layout.Height));
+            var randomLayoutTitle = Layouts.ElementAt(random.Next(Layouts.Count)).Title;
+            var layoutFromDb = await _gameLayoutService.GetGameLayoutByTitleAsync(randomLayoutTitle);
 
-            Messenger.Default.Send(loadLayoutMessage);
-            Messenger.Default.Send(configMessage, "Settings");
+            if (layoutFromDb != null)
+            {
+                var loadLayoutMessage = new LoadLayoutMessage(layoutFromDb);
+                var configMessage = new ConfigMessage(new GameConfiguration(layoutFromDb.Layout.Width,
+                    layoutFromDb.Layout.Height));
+
+                Messenger.Default.Send(loadLayoutMessage);
+                Messenger.Default.Send(configMessage, "Settings");
+            }
+            else
+            {
+                _dialogService.ShowMessage($"Could not load layout \"{randomLayoutTitle}\" from database");
+            }
         }
 
         private async void RemoveLayoutAsync()
         {
             IsBusy = true;
-            await _gameLayoutService.RemoveGameLayoutAsync(SelectedLayout);
+            bool result = await _gameLayoutService.RemoveGameLayoutAsync(SelectedLayout);
             IsBusy = false;
 
-            Layouts.Remove(SelectedLayout);
+            if (result)
+            {
+                Layouts.Remove(SelectedLayout);
+            }
+            else
+            {
+                _dialogService.ShowMessage($"Could not remove layout \"{SelectedLayout.Title}\" from database");
+            }
         }
 
         private async void SaveLayout(GameLayout layout)
@@ -162,12 +184,19 @@ namespace GameOfLife.ViewModels
             layout.Title = LayoutTitle;
 
             IsBusy = true;
-            await _gameLayoutService.SaveGameLayoutAsync(layout);
+            bool result = await _gameLayoutService.SaveGameLayoutAsync(layout);
             IsBusy = false;
 
-            //clear layout as we store it empty
-            layout.Layout = null;
-            Layouts.Add(layout);
+            if (result)
+            {
+                //clear layout as we store it empty
+                layout.Layout = null;
+                Layouts.Add(layout);
+            }
+            else
+            {
+                _dialogService.ShowMessage($"Could not save layout \"{layout.Title}\" to database");
+            }
         }
 
         private async void LoadLayoutsAsync()
@@ -178,7 +207,15 @@ namespace GameOfLife.ViewModels
                 var layouts = await _gameLayoutService.GetAllGameLayoutsAsync();
                 IsBusy = false;
 
-                Layouts = new ObservableCollection<GameLayout>(layouts);
+                if (layouts != null)
+                {
+                    Layouts = new ObservableCollection<GameLayout>(layouts);
+                }
+                else
+                {
+                    _dialogService.ShowMessage("Could not load layouts from database");
+                }
+                
                 _isLoaded = true;
             }
         }

@@ -113,8 +113,16 @@ namespace GameOfLife.ViewModels
                 var logs = await _gameLogService.GetAllGameLogsAsync();
                 IsBusy = false;
 
-                Logs = new ObservableCollection<GameLog>(logs);
-                FilteredLogs = new ListCollectionView(Logs) { Filter = Filter };
+                if (logs != null)
+                {
+                    Logs = new ObservableCollection<GameLog>(logs);
+                    FilteredLogs = new ListCollectionView(Logs) { Filter = Filter };
+                }
+                else
+                {
+                    _dialogService.ShowMessage("Could not load game logs from database");
+                }
+
                 _isLoaded = true;
             }
         }
