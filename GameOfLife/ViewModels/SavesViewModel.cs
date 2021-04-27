@@ -54,6 +54,7 @@ namespace GameOfLife.ViewModels
             {
                 Set(() => SelectedSave, ref _selectedSave, value);
                 LoadCommand.RaiseCanExecuteChanged();
+                RemoveCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -210,6 +211,7 @@ namespace GameOfLife.ViewModels
                 if (saves != null)
                 {
                     Saves = new ObservableCollection<GameSave>(saves);
+                    LoadRandomCommand.RaiseCanExecuteChanged();
                 }
                 else
                 {

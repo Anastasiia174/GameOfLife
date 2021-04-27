@@ -53,6 +53,7 @@ namespace GameOfLife.ViewModels
             {
                 Set(() => SelectedLayout, ref _selectedLayout, value);
                 LoadCommand.RaiseCanExecuteChanged();
+                DeleteCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -210,6 +211,7 @@ namespace GameOfLife.ViewModels
                 if (layouts != null)
                 {
                     Layouts = new ObservableCollection<GameLayout>(layouts);
+                    LoadRandomCommand.RaiseCanExecuteChanged();
                 }
                 else
                 {

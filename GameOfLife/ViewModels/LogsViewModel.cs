@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Data;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -112,9 +113,18 @@ namespace GameOfLife.ViewModels
                 var logs = await _gameLogService.GetAllGameLogsAsync();
                 IsBusy = false;
 
+                //if any logs was added before loading logs from DB - save them to DB
+                if (Logs.Any())
+                {
+                    foreach (var gameLog in Logs)
+                    {
+                        await _gameLogService.SaveGameLogAsync(gameLog);
+                    }
+                }
+
                 if (logs != null)
                 {
-                    Logs = new ObservableCollection<GameLog>(logs);
+                    Logs = new ObservableCollection<GameLog>(logs.Concat(Logs));
                     FilteredLogs = new ListCollectionView(Logs) { Filter = Filter };
                 }
                 else
@@ -151,13 +161,17 @@ namespace GameOfLife.ViewModels
 
         private async void SaveLog(LogEventMessage message)
         {
-            var result = await _gameLogService.SaveGameLogAsync(message.Log);
-            if (!result)
+            if (_isLoaded)
             {
-                _dialogService.ShowMessage("Could not save log to database.");
-            }
+                var result = await _gameLogService.SaveGameLogAsync(message.Log);
+                if (!result)
+                {
+                    _dialogService.ShowMessage("Could not save log to database.");
+                }
 
-            message.Log.Playground = null;
+                message.Log.Playground = null;
+            }
+            
             Logs.Add(message.Log);
         }
     }
