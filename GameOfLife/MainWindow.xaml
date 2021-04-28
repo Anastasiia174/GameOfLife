@@ -9,6 +9,7 @@
         xmlns:helpers="clr-namespace:GameOfLife.Helpers"
         mc:Ignorable="d"
         Title="Game of life" Height="600" Width="900"
+        Icon="icon.bmp"
         WindowStartupLocation="CenterScreen"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
 
